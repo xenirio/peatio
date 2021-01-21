@@ -1,0 +1,65 @@
+# encoding: UTF-8
+# frozen_string_literal: true
+
+module API
+  module V2
+    module Entities
+      class InternalTransfer < Base
+
+        expose(
+          :currency_id,
+          as: :currency,
+          documentation: {
+            type: String,
+            desc: 'The currency code.'
+          }
+        )
+
+        expose(
+          :sender_id, ## display UID
+          as: :sender,
+          documentation: {
+            type: String,
+            desc: 'The internal transfer sender.'
+          }
+        )
+
+        expose(
+          :receiver_id, ## display UID
+          as: :receiver,
+          documentation: {
+            type: String,
+            desc: 'The internal transfer receiver.'
+          }
+        )
+
+        expose(
+          :direction, ## call method from model
+          documentation: {
+            type: String,
+            desc: 'The internal transfer direction (incoming or outcoming internal transfer).'
+          }
+        )
+
+        expose(
+          :state,
+          as: :status,
+          documentation: {
+            type: String,
+            desc: 'The internal transfer state.'
+          }
+        )
+
+        expose(
+          :created_at,
+          :updated_at,
+          format_with: :iso8601,
+          documentation: {
+            type: String,
+            desc: 'The datetimes for the internal transfer.'
+          }
+        )
+      end
+    end
+  end
+end
