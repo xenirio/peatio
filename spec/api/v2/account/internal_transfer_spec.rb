@@ -1,10 +1,18 @@
+# frozen_string_literal: true
+
 describe API::V2::Account::InternalTransfers, type: :request do
   let(:endpoint) { '/api/v2/account/internal_transfers' }
-  let(:member) { create(:member, :level_3) }
+  let(:member) { create(:member, :level_3, email: 'example@gmail.com', uid: 'ID73BF61C8H0') }
+  let(:member_receiver) { create(:member, :level_3, email: 'receiver@gmail.com', uid: 'ID84BF61C8H0', username: 'test1') }
   let(:token) { jwt_for(member) }
+
+  # let(:deposit_eth) { create(:deposit, :deposit_eth, member: member, amount: 30.0) }
 
   before do
     Ability.stubs(:user_permissions).returns({ 'member' => { 'read' => ['InternalTransfer'], 'create' => ['InternalTransfer'] } })
+    # deposit_eth.accept!
+    # deposit_eth.process!
+    # deposit_eth.dispatch
   end
 
   describe 'GET /api/v2/account/internal_transfers' do
@@ -47,10 +55,11 @@ describe API::V2::Account::InternalTransfers, type: :request do
     it 'returns all internal transfers' do
       api_get endpoint, token: token
       result = JSON.parse(response.body)
-      expect(result.size).to eq 10
 
+      expect(result.size).to eq 10
       expect(response.headers.fetch('Total')).to eq '10'
     end
+
     it 'returns internal transfers of BTC currency' do
       api_get endpoint, params: { currency: 'btc' }, token: token
       result = JSON.parse(response.body)
@@ -65,4 +74,125 @@ describe API::V2::Account::InternalTransfers, type: :request do
       expect(result.count).to eq 6
     end
   end
+
+  describe "create internal transfer" do
+    let(:currency) { Currency.visible.sample; Currency.find(:eth) }
+    let(:amount) { 0.15 }
+
+    let :data do
+      { username_or_uid:            member_receiver.uid,
+        currency:                   currency.code,
+        amount:                     amount,
+        otp:                        123456 }
+    end
+
+    let(:account) { member.get_account(currency) }
+    let(:balance) { 1.2 }
+    before { account.plus_funds(balance) }
+
+    # let(:member_receiver_balance) { member_receiver.get_account(currency.code).balance }
+
+    before { Vault::TOTP.stubs(:validate?).returns(true) }
+
+    it 'validates missing params' do
+      data.except!(:otp, :amount, :currency, :username_or_uid)
+      api_post endpoint, params: data, token: token
+
+      expect(response).to have_http_status(422)
+      expect(response).to include_api_error('account.internaltransfer.missing_otp')
+      expect(response).to include_api_error('account.internaltransfer.missing_amount')
+      expect(response).to include_api_error('account.internaltransfer.missing_currency')
+      expect(response).to include_api_error('account.internaltransfer.empty_username_or_uid')
+    end
+
+    it 'requires otp' do
+      data[:otp] = nil
+      api_post endpoint, params: data, token: token
+
+      expect(response).to have_http_status(422)
+      expect(response).to include_api_error('account.internaltransfer.empty_otp')
+    end
+
+    it 'validates otp code' do
+      Vault::TOTP.stubs(:validate?).returns(false)
+      api_post endpoint, params: data, token: token
+      
+      expect(response).to have_http_status(422)
+      expect(response).to include_api_error('account.internal_transfer.invalid_otp')
+    end
+
+    it 'requires amount' do
+      data[:amount] = nil
+      api_post endpoint, params: data, token: token
+      expect(response).to have_http_status(422)
+      expect(response).to include_api_error('account.internal_transfer.non_positive_amount')
+    end
+
+    it 'validates negative amount' do
+      data[:amount] = -1
+      api_post endpoint, params: data, token: token
+
+      expect(response).to have_http_status(422)
+      expect(response).to include_api_error('account.internal_transfer.non_positive_amount')
+    end
+
+    it 'validates enough balance' do
+      data[:amount] = 100
+      api_post endpoint, params: data, token: token
+
+      expect(response).to have_http_status(422)
+      expect(response).to include_api_error('account.internal_transfer.insufficient_balance')
+    end
+
+    it 'validates amount type' do
+      data[:amount] = 'one'
+      api_post endpoint, params: data, token: token
+      expect(response).to have_http_status(422)
+      expect(response).to include_api_error('account.internal_transfer.non_decimal_amount')
+    end
+
+    it 'requires currency' do
+      data[:currency] = nil
+      api_post endpoint, params: data, token: token
+      expect(response).to have_http_status(422)
+      expect(response).to include_api_error('account.currency.doesnt_exist')
+    end
+
+    it 'creates new internal_transfer' do
+      api_post endpoint, params: data, token: token
+
+      expect(response).to have_http_status(201)
+      record = InternalTransfer.last
+
+      expect(record.sender_id).to eq member.id
+      expect(record.receiver_id).to eq member_receiver.id
+      expect(record.amount).to eq amount
+      expect(record.currency).to eq currency
+    end
+
+    it 'creates new internal_transfer using username' do
+      data[:username_or_uid] = member_receiver.username
+      api_post endpoint, params: data, token: token
+
+      expect(response).to have_http_status(201)
+      record = InternalTransfer.last
+
+      expect(record.sender_id).to eq member.id
+      expect(record.receiver_id).to eq member_receiver.id
+      expect(record.amount).to eq amount
+      expect(record.currency).to eq currency
+    end
+
+    it 'should change balance for receiver and sender after transfer' do
+      api_post endpoint, params: data, token: token
+      account.reload.balance
+
+      expect(response).to have_http_status(201)
+      record = InternalTransfer.last
+
+      expect(account.balance).to eq (balance - amount)
+      expect(member_receiver.get_account(currency.code).balance).to eq amount
+    end
+  end
+  
 end

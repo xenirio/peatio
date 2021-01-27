@@ -6,18 +6,67 @@ module API
     module Admin
       module Entities
         class InternalTransfer < API::V2::Entities::InternalTransfer
-          expose(
+          expose(  
             :id,
             documentation: {
               type: Integer,
-              desc: 'The internal transfer id.'
+              desc: 'Internal transfer uniq id'
             }
           )
+
           expose(
-            :type,
+            :currency_id,
+            as: :currency,
             documentation: {
               type: String,
-              desc: 'Internal transfer type.'
+              desc: 'The currency code.'
+            }
+          )
+  
+          expose(
+            :sender_id, ## display UID
+            as: :sender,
+            documentation: {
+              type: String,
+              desc: 'The internal transfer sender.'
+            }
+          )
+  
+          expose(
+            :receiver_id, ## display UID
+            as: :receiver,
+            documentation: {
+              type: String,
+              desc: 'The internal transfer receiver.'
+            }
+          )
+  
+          expose(
+            :direction, ## call method from model
+            documentation: {
+              type: String,
+              desc: 'The internal transfer direction (incoming or outcoming internal transfer).'
+            }
+          ) do |transfer, options|
+            transfer.direction(options[:current_user])
+          end
+  
+          expose(
+            :state,
+            as: :status,
+            documentation: {
+              type: String,
+              desc: 'The internal transfer state.'
+            }
+          )
+  
+          expose(
+            :created_at,
+            :updated_at,
+            format_with: :iso8601,
+            documentation: {
+              type: String,
+              desc: 'The datetimes for the internal transfer.'
             }
           )
         end

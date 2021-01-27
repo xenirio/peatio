@@ -39,7 +39,9 @@ module API
             type: String,
             desc: 'The internal transfer direction (incoming or outcoming internal transfer).'
           }
-        )
+        ) do |transfer, options|
+          transfer.direction(options[:current_user])
+        end
 
         expose(
           :state,

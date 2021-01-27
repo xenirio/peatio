@@ -33,8 +33,8 @@ class InternalTransfer < ApplicationRecord
 
   enum state: { completed: 1 }
 
-  def sender?(current_user, sender)
-    current_user.id == sender.id
+  def direction(user)
+    user == sender ? 'out' : 'in'
   end
 
 end
