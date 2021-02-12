@@ -92,15 +92,15 @@ module Jobs::Cron
       end
 
       def pnl_currencies
-        @pnl_currencies ||= ENV.fetch('PNL_CURRENCIES', '').split(',').map {|id| Currency.find(id) }
+        @pnl_currencies ||= Peatio::App.config.pnl_currencies.split(',').map {|id| Currency.find(id) }
       end
 
       def conversion_paths
-        @conversion_paths ||= parse_conversion_paths(ENV.fetch('CONVERSION_PATHS', ''))
+        @conversion_paths ||= parse_conversion_paths(Peatio::App.config.pnl_conversion_paths)
       end
 
       def exclude_roles
-        ENV.fetch('PNL_EXCLUDE_ROLES', '').split(',')
+        Peatio::App.config.pnl_exclude_roles.split(',')
       end
 
       def exclude_user_ids

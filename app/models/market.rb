@@ -69,7 +69,7 @@ class Market < ApplicationRecord
   end
 
   validate on: :create do
-    if ENV['MAX_MARKETS'].present? && Market.count >= ENV['MAX_MARKETS'].to_i
+    if Peatio::App.config.max_markets.present? && Market.count >= Peatio::App.config.max_markets.to_i
       errors.add(:max, 'Market limit has been reached')
     end
 

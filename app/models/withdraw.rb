@@ -78,7 +78,7 @@ class Withdraw < ApplicationRecord
       end
       after_commit do
         # auto process withdrawal if sum less than limits and WITHDRAW_ADMIN_APPROVE env set to false (not set)
-        process! if verify_limits && ENV.false?('WITHDRAW_ADMIN_APPROVE') && currency.coin?
+        process! if verify_limits && Peatio::App.config.withdraw_admin_approve == false && currency.coin?
       end
     end
 

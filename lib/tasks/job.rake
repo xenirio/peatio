@@ -5,7 +5,7 @@ namespace :job do
     desc 'Close orders older than ORDER_MAX_AGE.'
     task close: :environment do
       Job.execute('close_orders') do
-        order_max_age = ENV.fetch('ORDER_MAX_AGE', 2_419_200).to_i
+        order_max_age = Peatio::App.config.order_max_age
 
         # Cancel orders that older than max_order_age
         orders = Order.where('created_at < ? AND state = ?', Time.now - order_max_age, 100)

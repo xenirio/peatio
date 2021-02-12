@@ -90,7 +90,7 @@ module Workers
           if engine.queue.empty?
             engine.shift_gears :run
           else
-            accept = ENV['ACCEPT_MINUTES'] ? ENV['ACCEPT_MINUTES'].to_i : 30
+            accept = Peatio::App.config.accept_minutes
             order_ids = engine.queue
               .map {|args| [args[1][:trade][:maker_order_id], args[1][:trade][:taker_order_id]] }
               .flatten.uniq

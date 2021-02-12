@@ -2,9 +2,9 @@
 require 'peatio/aml'
 
 begin
-  if ENV['AML_BACKEND'].present?
-    require ENV['AML_BACKEND']
-    Peatio::AML.adapter = "#{ENV.fetch('AML_BACKEND').capitalize}".constantize.new
+  if Peatio::App.config.aml_backend.present?
+    require Peatio::App.config.aml_backend
+    Peatio::AML.adapter = "#{Peatio::App.config.aml_backend.capitalize}".constantize.new
   end
 rescue StandardError, LoadError => e
   Rails.logger.error { e.message }

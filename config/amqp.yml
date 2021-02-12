@@ -1,8 +1,8 @@
 connect:
-  host: <%= ENV.fetch('RABBITMQ_HOST', 'localhost') %>
-  port: <%= ENV.fetch('RABBITMQ_PORT', '5672') %>
-  username: <%= ENV.fetch('RABBITMQ_USER', 'guest') %>
-  password: <%= ENV.fetch('RABBITMQ_PASSWORD', 'guest') %>
+  host: <%= ENV.fetch('PEATIO_RABBITMQ_HOST', 'localhost') %>
+  port: <%= ENV.fetch('PEATIO_RABBITMQ_PORT', '5672') %>
+  username: <%= ENV.fetch('PEATIO_RABBITMQ_USER', 'guest') %>
+  password: <%= ENV.fetch('PEATIO_RABBITMQ_PASSWORD', 'guest') %>
 
 exchange:
   trade:

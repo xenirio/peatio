@@ -55,14 +55,14 @@ steps:
 - name: run-rspec
   image: ruby:2.6.5
   environment:
-    DATABASE_HOST: database
-    INFLUXDB_HOST: influxdb
-    RABBITMQ_HOST: rabbitmq
-    EVENT_API_RABBITMQ_HOST: rabbitmq
-    REDIS_URL: redis://redis:6379
+    PEATIO_DATABASE_HOST: database
+    PEATIO_INFLUXDB_HOST: influxdb
+    PEATIO_RABBITMQ_HOST: rabbitmq
+    PEATIO_EVENT_API_RABBITMQ_HOST: rabbitmq
+    PEATIO_REDIS_URL: redis://redis:6379
+    PEATIO_VAULT_ADDR: ''
+    PEATIO_VAULT_TOKEN: ''
     RAILS_ENV: test
-    VAULT_ADDR: ''
-    VAULT_TOKEN: ''
   commands:
   - bin/init_config
   - gem install bundler:2.1.4
@@ -84,12 +84,12 @@ steps:
 - name: docs-generate
   image: quay.io/openware/ruby-node:2.6.5
   environment:
-    DATABASE_HOST: database
-    INFLUXDB_HOST: influxdb
-    RABBITMQ_HOST: rabbitmq
-    EVENT_API_RABBITMQ_HOST: rabbitmq
-    REDIS_URL: redis://redis:6379
-    VAULT_TOKEN: ''
+    PEATIO_DATABASE_HOST: database
+    PEATIO_INFLUXDB_HOST: influxdb
+    PEATIO_RABBITMQ_HOST: rabbitmq
+    PEATIO_EVENT_API_RABBITMQ_HOST: rabbitmq
+    PEATIO_REDIS_URL: redis://redis:6379
+    PEATIO_VAULT_TOKEN: ''
   commands:
     - gem install bundler:2.1.4
     - bin/gendocs
@@ -162,15 +162,15 @@ steps:
 - name: run-rspec
   image: ruby:2.6.5
   environment:
-    DATABASE_HOST: "mariadb"
-    DATABASE_SUPPORT_JSON: "false"
-    INFLUXDB_HOST: influxdb
-    RABBITMQ_HOST: rabbitmq
-    EVENT_API_RABBITMQ_HOST: rabbitmq
-    REDIS_URL: redis://redis:6379
+    PEATIO_DATABASE_HOST: "mariadb"
+    PEATIO_DATABASE_SUPPORT_JSON: "false"
+    PEATIO_INFLUXDB_HOST: influxdb
+    PEATIO_RABBITMQ_HOST: rabbitmq
+    PEATIO_EVENT_API_RABBITMQ_HOST: rabbitmq
+    PEATIO_REDIS_URL: redis://redis:6379
+    PEATIO_VAULT_ADDR: ''
+    PEATIO_VAULT_TOKEN: ''
     RAILS_ENV: test
-    VAULT_ADDR: ''
-    VAULT_TOKEN: ''
   commands:
   - bin/init_config
   - gem install bundler:2.1.4
@@ -243,14 +243,14 @@ steps:
 - name: run-rspec
   image: ruby:2.6.5
   environment:
-    DATABASE_HOST: "mysql"
-    INFLUXDB_HOST: influxdb
-    RABBITMQ_HOST: rabbitmq
-    EVENT_API_RABBITMQ_HOST: rabbitmq
-    REDIS_URL: redis://redis:6379
+    PEATIO_DATABASE_HOST: "mysql"
+    PEATIO_INFLUXDB_HOST: influxdb
+    PEATIO_RABBITMQ_HOST: rabbitmq
+    PEATIO_EVENT_API_RABBITMQ_HOST: rabbitmq
+    PEATIO_REDIS_URL: redis://redis:6379
+    PEATIO_VAULT_ADDR: ''
+    PEATIO_VAULT_TOKEN: ''
     RAILS_ENV: test
-    VAULT_ADDR: ''
-    VAULT_TOKEN: ''
   commands:
   - bin/init_config
   - gem install bundler:2.1.4
@@ -321,19 +321,19 @@ steps:
 - name: run-rspec
   image: ruby:2.6.5
   environment:
-    DATABASE_HOST: "postgres"
-    DATABASE_USER: "postgres"
-    DATABASE_PASS: "changeme"
-    DATABASE_ADAPTER: "postgresql"
-    DATABASE_PORT: "5432"
-    DATABASE_COLLATION: ""
-    INFLUXDB_HOST: influxdb
-    RABBITMQ_HOST: rabbitmq
-    EVENT_API_RABBITMQ_HOST: rabbitmq
-    REDIS_URL: redis://redis:6379
+    PEATIO_DATABASE_HOST: "postgres"
+    PEATIO_DATABASE_USER: "postgres"
+    PEATIO_DATABASE_PASS: "changeme"
+    PEATIO_DATABASE_ADAPTER: "postgresql"
+    PEATIO_DATABASE_PORT: "5432"
+    PEATIO_DATABASE_COLLATION: ""
+    PEATIO_INFLUXDB_HOST: influxdb
+    PEATIO_RABBITMQ_HOST: rabbitmq
+    PEATIO_EVENT_API_RABBITMQ_HOST: rabbitmq
+    PEATIO_REDIS_URL: redis://redis:6379
+    PEATIO_VAULT_ADDR: ''
+    PEATIO_VAULT_TOKEN: ''
     RAILS_ENV: test
-    VAULT_ADDR: ''
-    VAULT_TOKEN: ''
   commands:
   - bin/init_config
   - gem install bundler:2.1.4

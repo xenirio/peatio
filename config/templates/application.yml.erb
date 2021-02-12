@@ -93,45 +93,7 @@ defaults: &defaults
   SCOUT_LOG_LEVEL: warn       # Verboseness of logs (debug, info, warn, error)
   SCOUT_ENV:       production # List of Rails environments for which Scout should be enabled.
 
-  # Configuration variables for dynamic Barong levels (1.8+).
-  MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT:  '3'
-  MINIMUM_MEMBER_LEVEL_FOR_WITHDRAW: '3'
-  MINIMUM_MEMBER_LEVEL_FOR_TRADING:  '3'
-
-  # Event API configuration.
-
-  # JWT configuration.
-  # You can generate keypair using:
-  #
-  #   ruby -e "require 'openssl'; require 'base64'; OpenSSL::PKey::RSA.generate(2048).tap { |p| puts '', 'PRIVATE RSA KEY (URL-safe Base64 encoded, PEM):', '', Base64.urlsafe_encode64(p.to_pem), '', 'PUBLIC RSA KEY (URL-safe Base64 encoded, PEM):', '', Base64.urlsafe_encode64(p.public_key.to_pem) }"
-  #
-  EVENT_API_JWT_PRIVATE_KEY: ~ # Private key. Must be URL-safe Base64 encoded in PEM format.
-  EVENT_API_JWT_ALGORITHM:   RS256
-
-  # RabbitMQ configuration.
-  # You can use just «EVENT_API_RABBITMQ_URL» or specify configuration per separate variable.
-  EVENT_API_RABBITMQ_URL:      ~
-  EVENT_API_RABBITMQ_HOST:     localhost
-  EVENT_API_RABBITMQ_PORT:     "5672"
-  EVENT_API_RABBITMQ_USERNAME: guest
-  EVENT_API_RABBITMQ_PASSWORD: guest
-
-  RANGER_HOST: '0.0.0.0'
-  RANGER_PORT: '8081'
-  RANGER_CONNECT_SECURE: 'false'
-
   BULLET: 'false'
-
-  # Configuration to allow Withdraw via API i.e (POST api/v2/account/withdraws)
-  ENABLE_ACCOUNT_WITHDRAWAL_API: 'true'
-
-  # Configure Vault to verify OTP for Withdraw API
-  VAULT_ADDR:   http://127.0.0.1:8200
-  VAULT_TOKEN:  ""
-
-  # Configure to limit currencies and markets on the platform.
-  MAX_CURRENCIES: ~
-  MAX_MARKETS:    ~
 
 development:
   <<: *defaults

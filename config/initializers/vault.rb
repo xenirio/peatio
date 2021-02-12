@@ -6,14 +6,14 @@ require 'vault/rails'
 
 Vault::Rails.configure do |config|
   config.enabled = Rails.env.production?
-  config.address = ENV.fetch('VAULT_ADDR', 'http://127.0.0.1:8200')
-  config.token = ENV['VAULT_TOKEN']
+  config.address = Peatio::App.config.vault_addr
+  config.token = Peatio::App.config.vault_token
   config.ssl_verify = false
   config.timeout = 60
-  config.application = ENV.fetch('VAULT_APP_NAME', 'peatio')
+  config.application = Peatio::App.config.vault_app_name
 end
 
-if ENV['VAULT_TOKEN'].to_s != ''
+if Peatio::App.config.vault_token.to_s != ''
   def renew_process
     token = Vault.auth_token.lookup(Vault.token)
     time = token.data[:ttl] * (1 + rand) * 0.1

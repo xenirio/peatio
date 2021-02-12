@@ -6,7 +6,7 @@ module API
     module Constraints
       class << self
         def included(base)
-          rate_limit = ENV.fetch("PEATIO_RATE_LIMIT_5MIN", 6000).to_i
+          rate_limit = Peatio::App.config.rate_limit_5min.to_i
           apply_rules!(rate_limit)
           base.use Rack::Attack
         end

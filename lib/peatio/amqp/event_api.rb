@@ -129,8 +129,8 @@ module EventAPI
             event: event_payload
         }
 
-        private_key = OpenSSL::PKey.read(Base64.urlsafe_decode64(ENV.fetch('EVENT_API_JWT_PRIVATE_KEY')))
-        algorithm   = ENV.fetch('EVENT_API_JWT_ALGORITHM')
+        private_key = OpenSSL::PKey.read(Base64.urlsafe_decode64(Peatio::App.config.event_api_jwt_private_key))
+        algorithm   = Peatio::App.config.event_api_jwt_algorithm
         jwt         = JWT::Multisig.generate_jwt jwt_payload, \
                                                    { Middlewares.application_name.to_sym => private_key },
                                                  { Middlewares.application_name.to_sym => algorithm }
@@ -185,12 +185,12 @@ module EventAPI
       memoize :bunny_exchange
 
       def rabbitmq_credentials
-        return ENV['EVENT_API_RABBITMQ_URL'] if ENV['EVENT_API_RABBITMQ_URL'].present?
+        return Peatio::App.config.event_api_rabbitmq_url if Peatio::App.config.event_api_rabbitmq_url.present?
 
-        { host:     ENV.fetch('EVENT_API_RABBITMQ_HOST'),
-          port:     ENV.fetch('EVENT_API_RABBITMQ_PORT'),
-          username: ENV.fetch('EVENT_API_RABBITMQ_USERNAME'),
-          password: ENV.fetch('EVENT_API_RABBITMQ_PASSWORD') }
+        { host:     Peatio::App.config.event_api_rabbitmq_host,
+          port:     Peatio::App.config.event_api_rabbitmq_port,
+          username: Peatio::App.config.event_api_rabbitmq_username,
+          password: Peatio::App.config.event_api_rabbitmq_password}
       end
 
       def exchange_name(event_name)

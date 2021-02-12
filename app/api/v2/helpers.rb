@@ -49,25 +49,25 @@ module API
       end
 
       def deposits_must_be_permitted!
-        if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT').to_i
+        if current_user.level < Peatio::App.config.minimum_member_level_for_deposit.to_i
           error!({ errors: ['account.deposit.not_permitted'] }, 403)
         end
       end
 
       def withdraws_must_be_permitted!
-        if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_WITHDRAW').to_i
+        if current_user.level < Peatio::App.config.minimum_member_level_for_withdraw.to_i
           error!({ errors: ['account.withdraw.not_permitted'] }, 403)
         end
       end
 
       def trading_must_be_permitted!
-        if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_TRADING').to_i
+        if current_user.level < Peatio::App.config.minimum_member_level_for_trading.to_i
           error!({ errors: ['market.trade.not_permitted'] }, 403)
         end
       end
 
       def withdraw_api_must_be_enabled!
-        if ENV.false?('ENABLE_ACCOUNT_WITHDRAWAL_API')
+        if Peatio::App.config.enable_account_withdrawal_api == false
           error!({ errors: ['account.withdraw.disabled_api'] }, 422)
         end
       end
