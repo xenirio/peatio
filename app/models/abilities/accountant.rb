@@ -23,6 +23,7 @@ module Abilities
       can :create, Adjustment
 
       can :read, Currency
+      can :read, Adjustment
     end
   end
 end
