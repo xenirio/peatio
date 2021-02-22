@@ -68,6 +68,16 @@ describe API::V2::Market::Trades, type: :request do
     )
   end
 
+  let(:btceth_ask_maker) do
+    create(
+      :order_ask,
+      :btceth,
+      price: '12.32'.to_d,
+      volume: '123.1234',
+      member: member
+    )
+  end
+
   let(:btceth_ask_taker) do
     create(
       :order_ask,
@@ -248,6 +258,21 @@ describe API::V2::Market::Trades, type: :request do
         end
       end
 
+      context 'sell orders with maker_id = user_id and taker_id = user_id ' do
+        let!(:btceth_ask_trade_maker) { create(:trade, :btceth, taker_order: btceth_ask_maker, taker: member, maker: member, created_at: 2.hours.ago) }
+
+        it 'taker_type = sell' do
+          api_get '/api/v2/market/trades', params: { market: 'btceth', type: 'sell' }, token: token
+          result = JSON.parse(response.body)
+
+          expect(result.size).to eq 2
+          expect(result.find { |t| t['id'] == btceth_ask_trade.id }['side']).to eq 'sell'
+          expect(result.find { |t| t['id'] == btceth_ask_trade.id }['order_id']).to eq btceth_ask.id
+          expect(result.find { |t| t['id'] == btceth_ask_trade_maker.id }['side']).to eq 'sell'
+          expect(result.find { |t| t['id'] == btceth_ask_trade_maker.id }['order_id']).to eq btceth_ask_maker.id
+        end
+      end
+
       context 'buy orders' do
         let!(:btceth_bid_trade_taker) { create(:trade, :btceth, taker_order: btceth_bid_taker, created_at: 2.hours.ago) }
 
@@ -269,6 +294,21 @@ describe API::V2::Market::Trades, type: :request do
           expect(result.size).to eq 1
           expect(result.find { |t| t['id'] == btcusd_bid_trade.id }['side']).to eq 'buy'
           expect(result.find { |t| t['id'] == btcusd_bid_trade.id }['order_id']).to eq btcusd_bid.id
+        end
+      end
+
+      context 'buy orders with maker_id = user_id and taker_id = user_id ' do
+        let!(:btcusd_bid_trade_maker) { create(:trade, :btcusd, taker_order: btcusd_bid_maker, taker: member, maker: member, created_at: 2.hours.ago) }
+
+        it 'taker_type = sell' do
+          api_get '/api/v2/market/trades', params: { market: 'btcusd', type: 'buy' }, token: token
+          result = JSON.parse(response.body)
+
+          expect(result.size).to eq 2
+          expect(result.find { |t| t['id'] == btcusd_bid_trade.id }['side']).to eq 'buy'
+          expect(result.find { |t| t['id'] == btcusd_bid_trade.id }['order_id']).to eq btcusd_bid.id
+          expect(result.find { |t| t['id'] == btcusd_bid_trade_maker.id }['side']).to eq 'buy'
+          expect(result.find { |t| t['id'] == btcusd_bid_trade_maker.id }['order_id']).to eq btcusd_bid_maker.id
         end
       end
     end

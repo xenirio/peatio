@@ -116,7 +116,7 @@ class Trade < ApplicationRecord
   def order_for_member(member)
     return unless member
 
-    if member.id == maker_id
+    if (member.id == maker_id) && !(member.id == maker_id && member.id == taker_id)
       maker_order
     elsif member.id == taker_id
       taker_order
