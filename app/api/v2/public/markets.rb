@@ -55,7 +55,8 @@ module API
                               .transform_keys {|k| "#{k}_cont"}
                               .merge(m: 'or')
 
-            search = ::Market.active
+            search = ::Market.spot
+                             .active
                              .where(params.slice(:base_unit, :quote_unit))
                              .ransack(search_params)
 
@@ -73,7 +74,7 @@ module API
           params do
             requires :market,
                      type: String,
-                     values: { value: -> { ::Market.active.ids }, message: 'public.market.doesnt_exist' },
+                     values: { value: -> { ::Market.spot.active.ids }, message: 'public.market.doesnt_exist' },
                      desc: -> { V2::Entities::Market.documentation[:id] }
             optional :asks_limit,
                      type: { value: Integer, message: 'public.order_book.non_integer_ask_limit' },
@@ -86,9 +87,10 @@ module API
                      default: 20,
                      desc: 'Limit the number of returned buy orders. Default to 20.'
           end
+
           get ":market/order-book", requirements: { market: /[\w\.\-]+/ } do
-            asks = OrderAsk.active.with_market(params[:market]).matching_rule.limit(params[:asks_limit])
-            bids = OrderBid.active.with_market(params[:market]).matching_rule.limit(params[:bids_limit])
+            asks = OrderAsk.active.with_market(params[:market], 'spot').matching_rule.limit(params[:asks_limit])
+            bids = OrderBid.active.with_market(params[:market], 'spot').matching_rule.limit(params[:bids_limit])
             book = OrderBook.new asks, bids
             present book, with: API::V2::Entities::OrderBook
           end
@@ -171,7 +173,7 @@ module API
           desc 'Get ticker of all markets (For response doc see /:market/tickers/ response).'
           get "/tickers" do
             Rails.cache.fetch(:markets_tickers, expires_in: 60) do
-              ::Market.active.ordered.inject({}) do |h, m|
+              ::Market.spot.active.ordered.inject({}) do |h, m|
                 h[m.id] = format_ticker TickersService[m].ticker
                 h
               end

@@ -71,7 +71,7 @@ class Order < ApplicationRecord
 
   scope :done, -> { with_state(:done) }
   scope :active, -> { with_state(:wait) }
-  scope :with_market, ->(market) { where(market_id: market) }
+  scope :with_market, ->(market, market_type) { where(market_id: market, market_type: market_type) }
 
   # Custom ransackers.
 

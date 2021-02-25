@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_22_155655) do
+ActiveRecord::Schema.define(version: 2021_02_25_123519) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -198,7 +198,9 @@ ActiveRecord::Schema.define(version: 2020_12_22_155655) do
     t.index ["reference_type", "reference_id"], name: "index_liabilities_on_reference_type_and_reference_id"
   end
 
-  create_table "markets", id: :string, limit: 20, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "markets", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "id", limit: 20, null: false
+    t.string "market_type", default: "spot", null: false
     t.string "base_unit", limit: 10, null: false
     t.string "quote_unit", limit: 10, null: false
     t.bigint "engine_id", null: false
@@ -212,9 +214,10 @@ ActiveRecord::Schema.define(version: 2020_12_22_155655) do
     t.string "state", limit: 32, default: "enabled", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["base_unit", "quote_unit"], name: "index_markets_on_base_unit_and_quote_unit", unique: true
+    t.index ["base_unit", "quote_unit", "market_type"], name: "index_markets_on_base_unit_and_quote_unit_and_market_type", unique: true
     t.index ["base_unit"], name: "index_markets_on_base_unit"
     t.index ["engine_id"], name: "index_markets_on_engine_id"
+    t.index ["id", "market_type"], name: "index_markets_on_id_and_market_type", unique: true
     t.index ["position"], name: "index_markets_on_position"
     t.index ["quote_unit"], name: "index_markets_on_quote_unit"
   end

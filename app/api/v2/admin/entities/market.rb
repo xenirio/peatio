@@ -7,6 +7,14 @@ module API
       module Entities
         class Market < API::V2::Entities::Market
           expose(
+            :market_type,
+            documentation: {
+              type: String,
+              desc: 'Kind of market.'
+            }
+          )
+
+          expose(
             :engine_id,
             documentation: {
               type: Integer,

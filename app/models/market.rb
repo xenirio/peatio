@@ -36,6 +36,10 @@ class Market < ApplicationRecord
   # sale - user can't view but can trade with market orders.
   # presale - user can't view and trade. Admin can trade.
 
+  TYPES = %w[spot otc].freeze
+  # spot - regular spot market
+  # otc - market used by Finex for quick buy/sell
+
   # == Attributes ===========================================================
 
   attr_readonly :base_unit, :quote_unit
@@ -73,13 +77,15 @@ class Market < ApplicationRecord
       errors.add(:max, 'Market limit has been reached')
     end
 
-    if Market.where(base_currency: quote_currency, quote_currency: base_currency).present? ||
-       Market.where(base_currency: base_currency, quote_currency: quote_currency).present?
-      errors.add(:base, "#{base_currency.upcase}, #{quote_currency.upcase} market already exists")
+    if Market.where(base_currency: quote_currency, quote_currency: base_currency, market_type: market_type).present? ||
+       Market.where(base_currency: base_currency, quote_currency: quote_currency, market_type: market_type).present?
+      errors.add(:base, "#{base_currency.upcase}, #{quote_currency.upcase} #{market_type} market already exists")
     end
   end
 
-  validates :id, uniqueness: { case_sensitive: false }, presence: true
+  validates :id, uniqueness: { scope: :market_type, case_sensitive: false }, presence: true
+
+  validates :market_type, inclusion: { in: TYPES }
 
   validates :base_currency, :quote_currency, presence: true
 
@@ -122,6 +128,9 @@ class Market < ApplicationRecord
 
   # == Scopes ===============================================================
 
+  default_scope { where(market_type: 'spot') }
+  scope :spot, -> { where(market_type: 'spot') }
+  scope :otc, -> { where(market_type: 'otc') }
   scope :ordered, -> { order(position: :asc) }
   scope :active, -> { where(state: %i[enabled hidden]) }
   scope :enabled, -> { where(state: :enabled) }
@@ -137,6 +146,38 @@ class Market < ApplicationRecord
   after_create { insert_position(self) }
 
   before_update { update_position(self) if position_changed? }
+
+  # == Class Methods ========================================================
+
+  class << self
+
+    # def find(*args)
+    #   binding.pry
+    #   with_scope(:find =>{:conditions => [:market_type => 'spot']}) {super}
+    # end
+    #
+    # def find_by(*args)
+    #   binding.pry
+    #   # with_scope(:find => where(:market_type => 'spot')) {super}
+    #   with_scope(:find =>{:conditions => [:market_type => 'spot']}) {super}
+    # end
+    #
+    # def where(*args)
+    #   binding.pry
+    #   # with_scope(:find => where(:market_type => 'spot')) {super}
+    #   # self.with_options(:find =>{:conditions => [:market_type => 'spot']}) {super}
+    #   self.with_scope(:find => {:conditions =>
+    #                               [:market_type => 'spot']}) {super}
+    # end
+
+    def find_spot(id)
+      Market.find_by(id: id, market_type: 'spot')
+    end
+
+    def find_otc(id)
+      Market.find_by(id: id, market_type: 'otc')
+    end
+  end
 
   # == Instance Methods =====================================================
 
@@ -196,11 +237,12 @@ class Market < ApplicationRecord
 end
 
 # == Schema Information
-# Schema version: 20200909083000
+# Schema version: 20210225123519
 #
 # Table name: markets
 #
 #  id               :string(20)       not null, primary key
+#  market_type      :string(255)      default("spot"), not null
 #  base_unit        :string(10)       not null
 #  quote_unit       :string(10)       not null
 #  engine_id        :bigint           not null
@@ -220,6 +262,7 @@ end
 #  index_markets_on_base_unit                 (base_unit)
 #  index_markets_on_base_unit_and_quote_unit  (base_unit,quote_unit) UNIQUE
 #  index_markets_on_engine_id                 (engine_id)
+#  index_markets_on_id_and_kind               (id,kind) UNIQUE
 #  index_markets_on_position                  (position)
 #  index_markets_on_quote_unit                (quote_unit)
 #
