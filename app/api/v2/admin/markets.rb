@@ -90,7 +90,7 @@ module API
         get '/markets/:id', requirements: { id: /[\w\.\-]+/ } do
           admin_authorize! :read, ::Market
 
-          present ::Market.find(params[:id]), with: API::V2::Admin::Entities::Market
+          present ::Market.find_spot(params[:id]), with: API::V2::Admin::Entities::Market
         end
 
         desc 'Create new market.' do
@@ -170,7 +170,7 @@ module API
         post '/markets/update' do
           admin_authorize! :update, ::Market
 
-          market = ::Market.find(params[:id])
+          market = ::Market.find_spot(params[:id])
           if market.update(declared(params, include_missing: false))
             present market, with: API::V2::Admin::Entities::Market
           else

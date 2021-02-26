@@ -18,7 +18,7 @@ describe API::V2::Management::Markets, type: :request do
 
     let(:data) { {} }
     let(:signers) { %i[alex jeff] }
-    let(:market) { Market.find(:btcusd) }
+    let(:market) { Market.find_spot(:btcusd) }
 
     it 'should validate min_price param' do
       data.merge!(id: market.id, min_price: -10.0)

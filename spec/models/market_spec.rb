@@ -3,7 +3,7 @@
 
 describe Market do
   context 'market attributes' do
-    subject { Market.find(:btcusd) }
+    subject { Market.find_spot(:btcusd) }
 
     it 'id' do
       expect(subject.id).to eq 'btcusd'
@@ -128,7 +128,7 @@ describe Market do
     end
 
     it 'validate position value on update' do
-      market = Market.find(:btcusd)
+      market = Market.find_spot(:btcusd)
       market.update(position: nil)
       expect(market.valid?).to eq false
       expect(market.errors[:position].size).to eq(2)
@@ -140,7 +140,7 @@ describe Market do
 
     it 'allows to disable all markets' do
       Market.where.not(id: :btcusd).update_all(state: :disabled)
-      market = Market.find(:btcusd)
+      market = Market.find_spot(:btcusd)
       market.update(state: :disabled)
       market.valid?
       expect(market.errors[:market].size).to eq(0)
@@ -169,7 +169,7 @@ describe Market do
   end
 
   context 'relationships' do
-    subject { Market.find(:btcusd) }
+    subject { Market.find_spot(:btcusd) }
     before do
       create(:trading_fee, market_id: :btcusd)
       create(:trading_fee, market_id: :btceth)
@@ -239,7 +239,7 @@ describe Market do
 
     context 'before update' do
       let!(:btctrst) { Market.create(valid_attributes) }
-      let(:btceth) { Market.find(:btceth) }
+      let(:btceth) { Market.find_spot(:btceth) }
 
       it 'move to the bottom of all currencies' do
         expect(Market.all.ordered.pluck(:id, :position)).to eq [["btcusd", 1], ["btceth", 2], ["btctrst", 3]]

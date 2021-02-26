@@ -9,7 +9,7 @@ describe Serializers::EventAPI::OrderCanceled do
     create :order_ask, \
       bid:           :usd,
       ask:           :btc,
-      market:        Market.find(:btcusd),
+      market:        Market.find_spot(:btcusd),
       state:         :wait,
       ord_type:      :limit,
       price:         '0.03'.to_d,

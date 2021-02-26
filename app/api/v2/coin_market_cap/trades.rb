@@ -12,7 +12,7 @@ module API
                    coerce_with: ->(name) { name.strip.split('_').join.downcase }
         end
         get "/trades/:market_pair" do
-          market = ::Market.find(params[:market_pair])
+          market = ::Market.find_spot(params[:market_pair])
           Trade.public_from_influx(market.id).map { |trade| format_trade(trade) }
         end
       end

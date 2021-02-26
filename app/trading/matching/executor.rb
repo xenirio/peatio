@@ -46,7 +46,7 @@ module Matching
 
     def execute!
       # NOTE: Run matching engine for disabled markets.
-      @market = Market.find(@trade_payload[:market_id])
+      @market = Market.find_spot(@trade_payload[:market_id])
       @price  = @trade_payload[:strike_price].to_d
       @amount = @trade_payload[:amount].to_d
       @total  = @trade_payload[:total].to_d

@@ -7,7 +7,7 @@ describe OrderBid do
   it { expect(subject.compute_locked).to eq subject.volume * subject.price }
 
   let(:market) do
-    Market.find(:btcusd).tap { |m| m.update(max_price: 1.0, min_amount: 0.1)}
+    Market.find_spot(:btcusd).tap { |m| m.update(max_price: 1.0, min_amount: 0.1)}
   end
 
   context 'compute locked for market order' do

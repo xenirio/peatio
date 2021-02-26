@@ -29,7 +29,7 @@ module Workers
         when 'reload'
           reload payload[:market]
         when 'new'
-          initialize_engine Market.find(payload[:market])
+          initialize_engine Market.find_spot(payload[:market])
         else
           Rails.logger.fatal { "Unknown action: #{payload[:action]}" }
         end
@@ -49,7 +49,7 @@ module Workers
           Market.find_each(&method(:initialize_engine))
           Rails.logger.info { "All engines reloaded." }
         else
-          initialize_engine Market.find(market)
+          initialize_engine Market.find_spot(market)
           Rails.logger.info { "#{market} engine reloaded." }
         end
       rescue DryrunError => e

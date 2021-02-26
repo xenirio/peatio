@@ -7,7 +7,7 @@ describe API::V2::Admin::Markets, type: :request do
   let(:level_3_member_token) { jwt_for(level_3_member) }
 
   describe 'GET /api/v2/admin/markets/:id' do
-    let(:market) { Market.find_by(id: 'btcusd') }
+    let(:market) { Market.find_spot('btcusd') }
 
     it 'returns information about specified market' do
       api_get "/api/v2/admin/markets/#{market.id}", token: token

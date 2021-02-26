@@ -36,9 +36,9 @@ class Market < ApplicationRecord
   # sale - user can't view but can trade with market orders.
   # presale - user can't view and trade. Admin can trade.
 
-  TYPES = %w[spot otc].freeze
+  TYPES = %w[spot qe].freeze
   # spot - regular spot market
-  # otc - market used by Finex for quick buy/sell
+  # qe - market used by Finex for quick exchange
 
   # == Attributes ===========================================================
 
@@ -83,7 +83,7 @@ class Market < ApplicationRecord
     end
   end
 
-  validates :id, uniqueness: { scope: :market_type, case_sensitive: false }, presence: true
+  validates :market_name, uniqueness: { scope: :market_type, case_sensitive: false }, presence: true
 
   validates :market_type, inclusion: { in: TYPES }
 
@@ -128,7 +128,6 @@ class Market < ApplicationRecord
 
   # == Scopes ===============================================================
 
-  default_scope { where(market_type: 'spot') }
   scope :spot, -> { where(market_type: 'spot') }
   scope :otc, -> { where(market_type: 'otc') }
   scope :ordered, -> { order(position: :asc) }
@@ -138,7 +137,7 @@ class Market < ApplicationRecord
   # == Callbacks ============================================================
 
   after_initialize :initialize_defaults, if: :new_record?
-  before_validation(on: :create) { self.id = "#{base_currency}#{quote_currency}" }
+  before_validation(on: :create) { self.market_name = "#{base_currency}#{quote_currency}" }
   before_validation(on: :create) { self.position = Market.count + 1 unless position.present? }
 
   after_commit { AMQP::Queue.enqueue(:matching, action: 'new', market: id) }
@@ -170,12 +169,12 @@ class Market < ApplicationRecord
     #                               [:market_type => 'spot']}) {super}
     # end
 
-    def find_spot(id)
-      Market.find_by(id: id, market_type: 'spot')
+    def find_spot(market_name)
+      Market.find_by(market_name: market_name, market_type: 'spot')
     end
 
-    def find_otc(id)
-      Market.find_by(id: id, market_type: 'otc')
+    def find_otc(market_name)
+      Market.find_by(market_name: market_name, market_type: 'otc')
     end
   end
 
@@ -241,7 +240,8 @@ end
 #
 # Table name: markets
 #
-#  id               :string(20)       not null, primary key
+#  id               :bigint           not null, primary key
+#  market_name      :string(20)       not null
 #  market_type      :string(255)      default("spot"), not null
 #  base_unit        :string(10)       not null
 #  quote_unit       :string(10)       not null
@@ -259,10 +259,10 @@ end
 #
 # Indexes
 #
-#  index_markets_on_base_unit                 (base_unit)
-#  index_markets_on_base_unit_and_quote_unit  (base_unit,quote_unit) UNIQUE
-#  index_markets_on_engine_id                 (engine_id)
-#  index_markets_on_id_and_kind               (id,kind) UNIQUE
-#  index_markets_on_position                  (position)
-#  index_markets_on_quote_unit                (quote_unit)
+#  index_markets_on_base_unit                                 (base_unit)
+#  index_markets_on_base_unit_and_quote_unit_and_market_type  (base_unit,quote_unit,market_type) UNIQUE
+#  index_markets_on_engine_id                                 (engine_id)
+#  index_markets_on_market_name_and_market_type               (market_name,market_type) UNIQUE
+#  index_markets_on_position                                  (position)
+#  index_markets_on_quote_unit                                (quote_unit)
 #

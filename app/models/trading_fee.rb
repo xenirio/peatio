@@ -52,7 +52,7 @@ class TradingFee < ApplicationRecord
 
   # == Relationships ========================================================
 
-  belongs_to :market, optional: true
+  belongs_to :market, -> { where(market_type: 'spot') }, foreign_key: :market_id, primary_key: :market_name, optional: true
 
   # == Validations ==========================================================
 

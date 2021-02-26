@@ -10,7 +10,7 @@ class Trade < ApplicationRecord
 
   # == Relationships ========================================================
 
-  belongs_to :market, required: true
+  belongs_to :market,-> { where(market_type: 'spot') }, foreign_key: :market_id, primary_key: :market_name, required: true
   belongs_to :maker_order, class_name: 'Order', foreign_key: :maker_order_id, required: true
   belongs_to :taker_order, class_name: 'Order', foreign_key: :taker_order_id, required: true
   belongs_to :maker, class_name: 'Member', foreign_key: :maker_id, required: true
@@ -347,7 +347,7 @@ class Trade < ApplicationRecord
 end
 
 # == Schema Information
-# Schema version: 20201125134745
+# Schema version: 20210225123519
 #
 # Table name: trades
 #
@@ -367,8 +367,9 @@ end
 # Indexes
 #
 #  index_trades_on_created_at                (created_at)
-#  index_trades_on_maker_id_and_taker_id     (maker_id,taker_id)
+#  index_trades_on_maker_id                  (maker_id)
 #  index_trades_on_maker_order_id            (maker_order_id)
 #  index_trades_on_market_id_and_created_at  (market_id,created_at)
+#  index_trades_on_taker_id                  (taker_id)
 #  index_trades_on_taker_order_id            (taker_order_id)
 #

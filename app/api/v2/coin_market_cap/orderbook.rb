@@ -16,7 +16,7 @@ module API
                    desc: 'Orders depth quantity: [0,5,10,20,50,100,500]'
         end
         get "/orderbook/:market_pair" do
-          market = ::Market.find(params[:market_pair])
+          market = ::Market.find_spot(params[:market_pair])
           asks = OrderAsk.get_depth(market.id)
           bids = OrderBid.get_depth(market.id)
 

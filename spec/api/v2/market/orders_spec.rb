@@ -274,7 +274,7 @@ describe API::V2::Market::Orders, type: :request do
 
     it 'submit a sell order on third party engine' do
       member.get_account(:btc).update_attributes(balance: 100)
-      Market.find('btcusd').engine.update(driver: "finex-spot")
+      Market.find_spot('btcusd').engine.update(driver: "finex-spot")
       AMQP::Queue.expects(:publish)
 
       expect do
@@ -333,7 +333,7 @@ describe API::V2::Market::Orders, type: :request do
 
     it 'validates volume greater than min_amount' do
       member.get_account(:btc).update_attributes(balance: 1)
-      m = Market.find(:btcusd)
+      m = Market.find_spot(:btcusd)
       m.update(min_amount: 1.0)
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '0.1', price: '2014' }
       expect(response.code).to eq '422'
@@ -342,7 +342,7 @@ describe API::V2::Market::Orders, type: :request do
 
     it 'validates price less than max_price' do
       member.get_account(:usd).update_attributes(balance: 1)
-      m = Market.find(:btcusd)
+      m = Market.find_spot(:btcusd)
       m.update(max_price: 1.0)
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'buy', volume: '0.1', price: '2' }
       expect(response.code).to eq '422'
@@ -358,7 +358,7 @@ describe API::V2::Market::Orders, type: :request do
 
     it 'validates price greater than min_price' do
       member.get_account(:usd).update_attributes(balance: 1)
-      m = Market.find(:btcusd)
+      m = Market.find_spot(:btcusd)
       m.update(min_price: 1.0)
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'buy', volume: '0.1', price: '0.2' }
       expect(response.code).to eq '422'
@@ -425,7 +425,7 @@ describe API::V2::Market::Orders, type: :request do
 
           member.get_account(:btc).update_attributes(balance: 1)
 
-          Market.find('btcusd').engine.update(driver: "finex-spot")
+          Market.find_spot('btcusd').engine.update(driver: "finex-spot")
 
           AMQP::Queue.expects(:publish)
 
@@ -569,8 +569,8 @@ describe API::V2::Market::Orders, type: :request do
     context 'third party order' do
 
       before do
-        Market.find('btcusd').engine.update(driver: "finex-spot")
-        Market.find('btceth').engine.update(driver: "finex-spot")
+        Market.find_spot('btcusd').engine.update(driver: "finex-spot")
+        Market.find_spot('btceth').engine.update(driver: "finex-spot")
       end
 
       it 'should cancel all my orders on market with third party engine' do
