@@ -17,6 +17,8 @@
 
 class Market < ApplicationRecord
 
+  self.inheritance_column = nil
+
   # == Constants ============================================================
 
   # Since we use decimal with 16 digits fractional part for storing numbers in DB
@@ -77,15 +79,15 @@ class Market < ApplicationRecord
       errors.add(:max, 'Market limit has been reached')
     end
 
-    if Market.where(base_currency: quote_currency, quote_currency: base_currency, market_type: market_type).present? ||
-       Market.where(base_currency: base_currency, quote_currency: quote_currency, market_type: market_type).present?
-      errors.add(:base, "#{base_currency.upcase}, #{quote_currency.upcase} #{market_type} market already exists")
+    if Market.where(base_currency: quote_currency, quote_currency: base_currency, type: type).present? ||
+       Market.where(base_currency: base_currency, quote_currency: quote_currency, type: type).present?
+      errors.add(:base, "#{base_currency.upcase}, #{quote_currency.upcase} #{type} market already exists")
     end
   end
 
-  validates :market_name, uniqueness: { scope: :market_type, case_sensitive: false }, presence: true
+  validates :ticker, uniqueness: { scope: :type, case_sensitive: false }, presence: true
 
-  validates :market_type, inclusion: { in: TYPES }
+  validates :type, inclusion: { in: TYPES }
 
   validates :base_currency, :quote_currency, presence: true
 
@@ -128,8 +130,8 @@ class Market < ApplicationRecord
 
   # == Scopes ===============================================================
 
-  scope :spot, -> { where(market_type: 'spot') }
-  scope :otc, -> { where(market_type: 'otc') }
+  scope :spot, -> { where(type: 'spot') }
+  scope :qe, -> { where(type: 'qe') }
   scope :ordered, -> { order(position: :asc) }
   scope :active, -> { where(state: %i[enabled hidden]) }
   scope :enabled, -> { where(state: :enabled) }
@@ -137,7 +139,7 @@ class Market < ApplicationRecord
   # == Callbacks ============================================================
 
   after_initialize :initialize_defaults, if: :new_record?
-  before_validation(on: :create) { self.market_name = "#{base_currency}#{quote_currency}" }
+  before_validation(on: :create) { self.ticker = "#{base_currency}#{quote_currency}" }
   before_validation(on: :create) { self.position = Market.count + 1 unless position.present? }
 
   after_commit { AMQP::Queue.enqueue(:matching, action: 'new', market: id) }
@@ -169,12 +171,12 @@ class Market < ApplicationRecord
     #                               [:market_type => 'spot']}) {super}
     # end
 
-    def find_spot(market_name)
-      Market.find_by(market_name: market_name, market_type: 'spot')
+    def find_spot_by_ticker(market_ticker)
+      Market.find_by(ticker: market_ticker, type: 'spot')
     end
 
-    def find_otc(market_name)
-      Market.find_by(market_name: market_name, market_type: 'otc')
+    def find_qe_by_ticker(market_ticker)
+      Market.find_by(ticker: market_ticker, type: 'qe')
     end
   end
 

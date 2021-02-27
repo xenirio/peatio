@@ -10,7 +10,7 @@ class Trade < ApplicationRecord
 
   # == Relationships ========================================================
 
-  belongs_to :market,-> { where(market_type: 'spot') }, foreign_key: :market_id, primary_key: :market_name, required: true
+  belongs_to :market,-> { where(type: 'spot') }, foreign_key: :market_id, primary_key: :ticker, required: true
   belongs_to :maker_order, class_name: 'Order', foreign_key: :maker_order_id, required: true
   belongs_to :taker_order, class_name: 'Order', foreign_key: :taker_order_id, required: true
   belongs_to :maker, class_name: 'Member', foreign_key: :maker_id, required: true

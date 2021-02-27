@@ -5,13 +5,11 @@ class AddMarketType < ActiveRecord::Migration[5.2]
   end
 
   def change
-    # We need to add market_type to old table to not break the migration
-    add_column :markets, :market_type, :string, default: 'spot', null: false, after: 'id'
     rename_table :markets, :legacy_markets
 
     create_table :markets do |t|
-      t.string "market_name", limit: 20, null: false
-      t.string "market_type", default: "spot", null: false
+      t.string "ticker", limit: 20, null: false
+      t.string "type", default: "spot", null: false
       t.string "base_unit", limit: 10, null: false
       t.string "quote_unit", limit: 10, null: false
       t.bigint "engine_id", null: false
@@ -26,8 +24,8 @@ class AddMarketType < ActiveRecord::Migration[5.2]
       t.timestamps
     end
 
-    add_index(:markets, %i[base_unit quote_unit market_type], unique: true)
-    add_index(:markets, %i[market_name market_type], unique: true)
+    add_index(:markets, %i[base_unit quote_unit type], unique: true)
+    add_index(:markets, %i[ticker type], unique: true)
     add_index(:markets, "base_unit")
     add_index(:markets, "position")
     add_index(:markets, "quote_unit")
@@ -35,7 +33,7 @@ class AddMarketType < ActiveRecord::Migration[5.2]
 
     LegacyMarket.find_each do |market|
       market_attrs = market.attributes
-      market_attrs["market_name"] = market_attrs["id"]
+      market_attrs["ticker"] = market_attrs["id"]
       Market.create!(market_attrs.except("id", "created_at", "updated_at"))
     end
 

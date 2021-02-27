@@ -199,8 +199,8 @@ ActiveRecord::Schema.define(version: 2021_02_25_123519) do
   end
 
   create_table "markets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "market_name", limit: 20, null: false
-    t.string "market_type", default: "spot", null: false
+    t.string "ticker", limit: 20, null: false
+    t.string "type", default: "spot", null: false
     t.string "base_unit", limit: 10, null: false
     t.string "quote_unit", limit: 10, null: false
     t.bigint "engine_id", null: false
@@ -214,12 +214,12 @@ ActiveRecord::Schema.define(version: 2021_02_25_123519) do
     t.string "state", limit: 32, default: "enabled", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["base_unit", "quote_unit", "market_type"], name: "index_markets_on_base_unit_and_quote_unit_and_market_type", unique: true
+    t.index ["base_unit", "quote_unit", "type"], name: "index_markets_on_base_unit_and_quote_unit_and_type", unique: true
     t.index ["base_unit"], name: "index_markets_on_base_unit"
     t.index ["engine_id"], name: "index_markets_on_engine_id"
-    t.index ["market_name", "market_type"], name: "index_markets_on_market_name_and_market_type", unique: true
     t.index ["position"], name: "index_markets_on_position"
     t.index ["quote_unit"], name: "index_markets_on_quote_unit"
+    t.index ["ticker", "type"], name: "index_markets_on_ticker_and_type", unique: true
   end
 
   create_table "members", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

@@ -5,7 +5,7 @@ FactoryBot.define do
   factory :market do
     engine { create(:engine) }
     trait :btcusd do
-      market_name       { 'btcusd' }
+      market_ticker       { 'btcusd' }
       market_type       { 'spot' }
       base_currency     { 'btc' }
       quote_currency    { 'usd' }
@@ -18,7 +18,7 @@ FactoryBot.define do
     end
 
     trait :btceth do
-      market_name       { 'btceth' }
+      market_ticker       { 'btceth' }
       market_type       { 'spot' }
       base_currency     { 'btc' }
       quote_currency    { 'eth' }
@@ -31,7 +31,7 @@ FactoryBot.define do
     end
 
     trait :btceur do
-      market_name       { 'btceur' }
+      market_ticker       { 'btceur' }
       market_type       { 'spot' }
       base_currency     { 'btc' }
       quote_currency    { 'eur' }
@@ -44,7 +44,7 @@ FactoryBot.define do
     end
 
     trait :ethusd do
-      market_name       { 'ethusd' }
+      market_ticker       { 'ethusd' }
       market_type       { 'spot' }
       base_currency     { 'eth' }
       quote_currency    { 'usd' }
@@ -57,7 +57,7 @@ FactoryBot.define do
     end
 
     trait :btctrst do
-      market_name       { 'btctrst' }
+      market_ticker       { 'btctrst' }
       market_type       { 'spot' }
       base_currency     { 'btc' }
       quote_currency    { 'trst' }
@@ -70,7 +70,7 @@ FactoryBot.define do
     end
 
     trait :xagm_cxusd do
-      market_name       { 'xagm.cxusd' }
+      market_ticker       { 'xagm.cxusd' }
       market_type       { 'spot' }
       base_currency     { 'xagm.cx' }
       quote_currency    { 'usd' }
@@ -83,7 +83,7 @@ FactoryBot.define do
     end
 
     trait :btceth_qe do
-      market_name       { 'btceth' }
+      market_ticker       { 'btceth' }
       market_type       { 'qe' }
       base_currency     { 'btc' }
       quote_currency    { 'eth' }
