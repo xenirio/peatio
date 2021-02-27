@@ -68,7 +68,7 @@ class TradingFee < ApplicationRecord
 
   validates :market_id,
             presence: true,
-            inclusion: { in: ->(_fs){ Market.ids.append(ANY) } }
+            inclusion: { in: ->(_fs){ Market.spot.pluck(:ticker).append(ANY) } }
 
   validates :maker, :taker, precision: { less_than_or_eq_to: FEE_PRECISION }
 

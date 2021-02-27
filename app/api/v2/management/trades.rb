@@ -19,7 +19,7 @@ module API
           optional :limit,    type: Integer, default: 100, range: 1..1000, desc: 'The number of objects per page (defaults to 100, maximum is 1000).'
         end
         post '/trades' do
-          market = ::Market.find_spot(params[:market]) if params[:market].present?
+          market = ::Market.find_spot_by_ticker(params[:market]) if params[:market].present?
           member = Member.find_by!(uid: params[:uid]) if params[:uid].present?
 
           Trade

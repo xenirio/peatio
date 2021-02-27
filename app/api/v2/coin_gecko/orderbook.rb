@@ -19,7 +19,7 @@ module API
         end
 
         get '/orderbook' do
-          market = ::Market.find_spot(params[:ticker_id])
+          market = ::Market.find_spot_by_ticker(params[:ticker_id])
           asks = OrderAsk.get_depth(market.id)
           bids = OrderBid.get_depth(market.id)
 

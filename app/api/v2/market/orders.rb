@@ -12,15 +12,15 @@ module API
           success: API::V2::Entities::Order
         params do
           optional :market,
-                   values: { value: ->(v) { (Array.wrap(v) - ::Market.active.ids).blank? }, message: 'market.market.doesnt_exist' },
-                   desc: -> { V2::Entities::Market.documentation[:id] }
+                   values: { value: ->(v) { (Array.wrap(v) - ::Market.spot.active.pluck(:ticker)).blank? }, message: 'market.market.doesnt_exist' },
+                   desc: -> { V2::Entities::Market.documentation[:ticker] }
           optional :base_unit,
                    type: String,
-                   values: { value: -> { ::Market.active.pluck(:base_unit) }, message: 'market.market.doesnt_exist' },
+                   values: { value: -> { ::Market.spot.active.pluck(:base_unit) }, message: 'market.market.doesnt_exist' },
                    desc: -> { V2::Entities::Market.documentation[:base_unit] }
           optional :quote_unit,
                    type: String,
-                   values: { value: -> { ::Market.active.pluck(:quote_unit) }, message: 'market.market.doesnt_exist' },
+                   values: { value: -> { ::Market.spot.active.pluck(:base_unit) }, message: 'market.market.doesnt_exist' },
                    desc: -> { V2::Entities::Market.documentation[:quote_unit] }
           optional :state,
                    values: { value: ->(v) { (Array.wrap(v) - Order.state.values).blank? }, message: 'market.order.invalid_state' },
@@ -137,7 +137,7 @@ module API
         params do
           optional :market,
                    type: String,
-                   values: { value: -> { ::Market.active.ids }, message: 'market.market.doesnt_exist' },
+                   values: {  value: -> { ::Market.spot.pluck(:ticker) }, message: 'market.market.doesnt_exist' },
                    desc: -> { V2::Entities::Market.documentation[:id] }
           optional :side,
                    type: String,

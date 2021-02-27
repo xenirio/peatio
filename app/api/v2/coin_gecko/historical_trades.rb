@@ -28,7 +28,7 @@ module API
                    coerce_with: ->(end_time) { Time.parse(end_time).to_i }
         end
         get '/historical_trades' do
-          market = ::Market.find_spot(params[:ticker_id])
+          market = ::Market.find_spot_by_ticker(params[:ticker_id])
 
           filters = declared(params, include_missing: false)
                     .except(:ticker_id, :limit)

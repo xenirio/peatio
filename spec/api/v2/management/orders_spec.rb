@@ -14,7 +14,7 @@ describe API::V2::Management::Orders, type: :request do
         write_orders: { permitted_signers: %i[alex jeff], mandatory_signers: %i[alex] }
       }
 
-    Market.find_spot('btceth').update!(engine: finex_engine)
+    Market.find_spot_by_ticker('btceth').update!(engine: finex_engine)
   end
 
   describe 'POST /api/v2/management/orders' do

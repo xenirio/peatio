@@ -10,8 +10,8 @@ module API
         params :enabled_markets do
           requires :market,
                    type: String,
-                   values: { value: -> { ::Market.spot.active.ids }, message: 'market.market.doesnt_exist_or_not_enabled' },
-                   desc: -> { V2::Entities::Market.documentation[:id] }
+                   values: { value: -> { ::Market.spot.active.pluck(:ticker) }, message: 'market.market.doesnt_exist_or_not_enabled' },
+                   desc: -> { V2::Entities::Market.documentation[:ticker] }
         end
 
         params :order do

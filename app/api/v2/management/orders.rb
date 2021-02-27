@@ -85,7 +85,7 @@ module API
             params.merge!(member_id: member.id) if member.present?
           end
 
-          market = ::Market.find_spot(params[:market])
+          market = ::Market.find_spot_by_ticker(params[:market])
           market_engine = market.engine
 
           if market_engine.peatio_engine?

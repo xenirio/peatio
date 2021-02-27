@@ -10,7 +10,7 @@ describe Matching::Engine do
     end
   end
 
-  let(:market) { Market.find_spot('btcusd') }
+  let(:market) { Market.find_spot_by_ticker('btcusd') }
   let(:price)  { 10.to_d }
   let(:volume) { 5.to_d }
   let(:ask)    { Matching.mock_limit_order(type: :ask, price: price, volume: volume) }
