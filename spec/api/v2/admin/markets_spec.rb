@@ -59,12 +59,20 @@ describe API::V2::Admin::Markets, type: :request do
   end
 
   describe 'GET /api/v2/admin/markets' do
-    it 'lists of markets' do
+    it 'lists of spot markets' do
       api_get '/api/v2/admin/markets', token: token
       expect(response).to be_successful
 
       result = JSON.parse(response.body)
-      expect(result.size).to eq 2
+      expect(result.size).to eq Market.spot.count
+    end
+
+    it 'lists of qe markets' do
+      api_get '/api/v2/admin/markets', params: { type: 'qe'}, token: token
+      expect(response).to be_successful
+
+      result = JSON.parse(response.body)
+      expect(result.size).to eq Market.qe.count
     end
 
     it 'returns markets by ascending order' do
