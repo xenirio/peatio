@@ -18,7 +18,7 @@ class TickersService
 
   def initialize(market)
     if market.is_a? Market
-      @market_id = market.ticker
+      @market_id = market.symbol
     else
       @market_id = market.to_s
     end

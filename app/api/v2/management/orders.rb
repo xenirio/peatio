@@ -15,7 +15,7 @@ module API
                    values: { value: ->(v) { Member.exists?(uid: v) }, message: 'management.orders.uid_doesnt_exist' },
                    desc: 'Filter order by owner uid'
           optional :market,
-                   values: { value: -> { ::Market.spot.pluck(:ticker) }, message: 'management.orders.market_doesnt_exist' },
+                   values: { value: -> { ::Market.spot.pluck(:symbol) }, message: 'management.orders.market_doesnt_exist' },
                    desc: -> { API::V2::Management::Entities::Market.documentation[:id][:desc] }
           optional :state,
                    values: { value: -> { ::Order.state.values }, message: 'management.orders.invalid_state' },
@@ -75,7 +75,7 @@ module API
                    values: { value: ->(v) { Member.exists?(uid: v) }, message: 'management.orders.uid_doesnt_exist' },
                    desc: 'Filter order by owner uid'
           requires :market,
-                   values: { value: -> { ::Market.spot.active.pluck(:ticker) }, message: 'management.order.market_doesnt_exist' },
+                   values: { value: -> { ::Market.spot.active.pluck(:symbol) }, message: 'management.order.market_doesnt_exist' },
                    desc: -> { API::V2::Management::Entities::Market.documentation[:id][:desc] }
         end
 
@@ -85,7 +85,7 @@ module API
             params.merge!(member_id: member.id) if member.present?
           end
 
-          market = ::Market.find_spot_by_ticker(params[:market])
+          market = ::Market.find_spot_by_symbol(params[:market])
           market_engine = market.engine
 
           if market_engine.peatio_engine?
@@ -98,7 +98,7 @@ module API
             orders.map(&:trigger_internal_cancellation)
           else
             filters = {
-              market_id: market.ticker,
+              market_id: market.symbol,
               member_uid: params[:uid]
             }.compact
 

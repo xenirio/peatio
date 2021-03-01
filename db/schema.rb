@@ -199,7 +199,7 @@ ActiveRecord::Schema.define(version: 2021_02_25_123519) do
   end
 
   create_table "markets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "ticker", limit: 20, null: false
+    t.string "symbol", limit: 20, null: false
     t.string "type", default: "spot", null: false
     t.string "base_unit", limit: 10, null: false
     t.string "quote_unit", limit: 10, null: false
@@ -219,7 +219,7 @@ ActiveRecord::Schema.define(version: 2021_02_25_123519) do
     t.index ["engine_id"], name: "index_markets_on_engine_id"
     t.index ["position"], name: "index_markets_on_position"
     t.index ["quote_unit"], name: "index_markets_on_quote_unit"
-    t.index ["ticker", "type"], name: "index_markets_on_ticker_and_type", unique: true
+    t.index ["symbol", "type"], name: "index_markets_on_symbol_and_type", unique: true
   end
 
   create_table "members", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

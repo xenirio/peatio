@@ -15,7 +15,7 @@ module API
           success: API::V2::Admin::Entities::Order
         params do
           optional :market,
-                   values: { value: -> { ::Market.spot.pluck(:ticker) }, message: 'admin.market.doesnt_exist' },
+                   values: { value: -> { ::Market.spot.pluck(:symbol) }, message: 'admin.market.doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:id][:desc] }
           optional :state,
                    values: { value: -> { ::Order.state.values }, message: 'admin.order.invalid_state' },
@@ -92,7 +92,7 @@ module API
         desc 'Cancel all orders.'
         params do
           requires :market,
-                   values: { value: -> { ::Market.spot.pluck(:ticker) }, message: 'admin.order.market_doesnt_exist' },
+                   values: { value: -> { ::Market.spot.active.pluck(:symbol) }, message: 'admin.order.market_doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Order.documentation[:id][:desc] }
           optional :side,
                    values: { value: %w(sell buy), message: 'admin.order.invalid_side' },

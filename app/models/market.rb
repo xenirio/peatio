@@ -64,7 +64,7 @@ class Market < ApplicationRecord
   has_one :quote, class_name: 'Currency', foreign_key: :id, primary_key: :quote_unit
   belongs_to :engine, required: true
 
-  has_many :trading_fees, dependent: :delete_all
+  has_many :trading_fees, foreign_key: :market_id, primary_key: :symbol,  dependent: :delete_all
 
   # == Validations ==========================================================
 
@@ -85,7 +85,7 @@ class Market < ApplicationRecord
     end
   end
 
-  validates :ticker, uniqueness: { scope: :type, case_sensitive: false }, presence: true
+  validates :symbol, uniqueness: { scope: :type, case_sensitive: false }, presence: true
 
   validates :type, inclusion: { in: TYPES }
 
@@ -139,7 +139,7 @@ class Market < ApplicationRecord
   # == Callbacks ============================================================
 
   after_initialize :initialize_defaults, if: :new_record?
-  before_validation(on: :create) { self.ticker = "#{base_currency}#{quote_currency}" }
+  before_validation(on: :create) { self.symbol = "#{base_currency}#{quote_currency}" }
   before_validation(on: :create) { self.position = Market.count + 1 unless position.present? }
 
   after_commit { AMQP::Queue.enqueue(:matching, action: 'new', market: id) }
@@ -151,32 +151,12 @@ class Market < ApplicationRecord
   # == Class Methods ========================================================
 
   class << self
-
-    # def find(*args)
-    #   binding.pry
-    #   with_scope(:find =>{:conditions => [:market_type => 'spot']}) {super}
-    # end
-    #
-    # def find_by(*args)
-    #   binding.pry
-    #   # with_scope(:find => where(:market_type => 'spot')) {super}
-    #   with_scope(:find =>{:conditions => [:market_type => 'spot']}) {super}
-    # end
-    #
-    # def where(*args)
-    #   binding.pry
-    #   # with_scope(:find => where(:market_type => 'spot')) {super}
-    #   # self.with_options(:find =>{:conditions => [:market_type => 'spot']}) {super}
-    #   self.with_scope(:find => {:conditions =>
-    #                               [:market_type => 'spot']}) {super}
-    # end
-
-    def find_spot_by_ticker(market_ticker)
-      Market.find_by!(ticker: market_ticker, type: 'spot')
+    def find_spot_by_symbol(market_symbol)
+      Market.find_by!(symbol: market_symbol, type: 'spot')
     end
 
-    def find_qe_by_ticker(market_ticker)
-      Market.find_by!(ticker: market_ticker, type: 'qe')
+    def find_qe_by_symbol(market_symbol)
+      Market.find_by!(symbol: market_symbol, type: 'qe')
     end
   end
 
@@ -243,8 +223,8 @@ end
 # Table name: markets
 #
 #  id               :bigint           not null, primary key
-#  market_name      :string(20)       not null
-#  market_type      :string(255)      default("spot"), not null
+#  symbol           :string(20)       not null
+#  type             :string(255)      default("spot"), not null
 #  base_unit        :string(10)       not null
 #  quote_unit       :string(10)       not null
 #  engine_id        :bigint           not null
@@ -261,10 +241,10 @@ end
 #
 # Indexes
 #
-#  index_markets_on_base_unit                                 (base_unit)
-#  index_markets_on_base_unit_and_quote_unit_and_market_type  (base_unit,quote_unit,market_type) UNIQUE
-#  index_markets_on_engine_id                                 (engine_id)
-#  index_markets_on_market_name_and_market_type               (market_name,market_type) UNIQUE
-#  index_markets_on_position                                  (position)
-#  index_markets_on_quote_unit                                (quote_unit)
+#  index_markets_on_base_unit                          (base_unit)
+#  index_markets_on_base_unit_and_quote_unit_and_type  (base_unit,quote_unit,type) UNIQUE
+#  index_markets_on_engine_id                          (engine_id)
+#  index_markets_on_position                           (position)
+#  index_markets_on_quote_unit                         (quote_unit)
+#  index_markets_on_symbol_and_type                    (symbol,type) UNIQUE
 #

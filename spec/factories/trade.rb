@@ -7,7 +7,7 @@ FactoryBot.define do
       price { '10.0'.to_d }
       amount { '1.0'.to_d }
       total { price.to_d * amount.to_d }
-      market { Market.find_spot_by_ticker(:btcusd) }
+      market { Market.find_spot_by_symbol(:btcusd) }
       maker_order { create(:order_ask, :btcusd) }
       taker_order { create(:order_bid, :btcusd) }
       maker { maker_order.member }
@@ -18,7 +18,7 @@ FactoryBot.define do
       price { '10.0'.to_d }
       amount { '1.0'.to_d }
       total { price.to_d * amount.to_d }
-      market { Market.find_spot_by_ticker(:btceth) }
+      market { Market.find_spot_by_symbol(:btceth) }
       maker_order { create(:order_ask, :btceth) }
       taker_order { create(:order_bid, :btceth) }
       maker { maker_order.member }

@@ -19,9 +19,9 @@ module API
         end
 
         get '/orderbook' do
-          market = ::Market.find_spot_by_ticker(params[:ticker_id])
-          asks = OrderAsk.get_depth(market.ticker)
-          bids = OrderBid.get_depth(market.ticker)
+          market = ::Market.find_spot_by_symbol(params[:ticker_id])
+          asks = OrderAsk.get_depth(market.symbol)
+          bids = OrderBid.get_depth(market.symbol)
 
           # Depth = 100 means 50 for each bid/ask side
           # Not defined or 0 = full order book

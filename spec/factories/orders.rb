@@ -15,7 +15,7 @@ FactoryBot.define do
 
       bid { :usd }
       ask { :btc }
-      market { Market.find_spot_by_ticker(:btcusd) }
+      market { Market.find_spot_by_symbol(:btcusd) }
       state { :wait }
       ord_type { 'limit' }
       price { '1'.to_d }
@@ -29,7 +29,7 @@ FactoryBot.define do
     trait :btcusd do
       bid { :usd }
       ask { :btc }
-      market { Market.find_spot_by_ticker(:btcusd) }
+      market { Market.find_spot_by_symbol(:btcusd) }
       state { :wait }
       ord_type { 'limit' }
       price { '1'.to_d }
@@ -43,7 +43,7 @@ FactoryBot.define do
     trait :btceth do
       bid { :eth }
       ask { :btc }
-      market { Market.find_spot_by_ticker(:btceth) }
+      market { Market.find_spot_by_symbol(:btceth) }
       state { :wait }
       ord_type { 'limit' }
       price { '1'.to_d }
@@ -68,7 +68,7 @@ FactoryBot.define do
 
       bid { :usd }
       ask { :btc }
-      market { Market.find_spot_by_ticker(:btcusd) }
+      market { Market.find_spot_by_symbol(:btcusd) }
       state { :wait }
       ord_type { 'limit' }
       price { '1'.to_d }
@@ -82,7 +82,7 @@ FactoryBot.define do
     trait :btcusd do
       bid { :usd }
       ask { :btc }
-      market { Market.find_spot_by_ticker(:btcusd) }
+      market { Market.find_spot_by_symbol(:btcusd) }
       state { :wait }
       ord_type { 'limit' }
       price { '1'.to_d }
@@ -96,7 +96,7 @@ FactoryBot.define do
     trait :btceth do
       bid { :eth }
       ask { :btc }
-      market { Market.find_spot_by_ticker(:btceth) }
+      market { Market.find_spot_by_symbol(:btceth) }
       state { :wait }
       ord_type { 'limit' }
       price { '1'.to_d }

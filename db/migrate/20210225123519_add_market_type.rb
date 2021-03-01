@@ -8,7 +8,7 @@ class AddMarketType < ActiveRecord::Migration[5.2]
     rename_table :markets, :legacy_markets
 
     create_table :markets do |t|
-      t.string "ticker", limit: 20, null: false
+      t.string "symbol", limit: 20, null: false
       t.string "type", default: "spot", null: false
       t.string "base_unit", limit: 10, null: false
       t.string "quote_unit", limit: 10, null: false
@@ -25,7 +25,7 @@ class AddMarketType < ActiveRecord::Migration[5.2]
     end
 
     add_index(:markets, %i[base_unit quote_unit type], unique: true)
-    add_index(:markets, %i[ticker type], unique: true)
+    add_index(:markets, %i[symbol type], unique: true)
     add_index(:markets, "base_unit")
     add_index(:markets, "position")
     add_index(:markets, "quote_unit")
@@ -33,7 +33,7 @@ class AddMarketType < ActiveRecord::Migration[5.2]
 
     LegacyMarket.find_each do |market|
       market_attrs = market.attributes
-      market_attrs["ticker"] = market_attrs["id"]
+      market_attrs["symbol"] = market_attrs["id"]
       Market.create!(market_attrs.except("id", "created_at", "updated_at"))
     end
 

@@ -45,7 +45,7 @@ module API
                    desc: -> { API::V2::Management::Entities::Market.documentation[:position][:desc] }
         end
         put '/markets/update' do
-          market = ::Market.find_spot_by_ticker(params[:id])
+          market = ::Market.find_spot_by_symbol(params[:id])
           if market.update(declared(params, include_missing: false))
             present market, with: API::V2::Management::Entities::Market
           else

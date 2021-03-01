@@ -12,8 +12,8 @@ module API
           success: API::V2::Entities::Order
         params do
           optional :market,
-                   values: { value: ->(v) { (Array.wrap(v) - ::Market.spot.active.pluck(:ticker)).blank? }, message: 'market.market.doesnt_exist' },
-                   desc: -> { V2::Entities::Market.documentation[:ticker] }
+                   values: { value: ->(v) { (Array.wrap(v) - ::Market.spot.active.pluck(:symbol)).blank? }, message: 'market.market.doesnt_exist' },
+                   desc: -> { V2::Entities::Market.documentation[:symbol] }
           optional :base_unit,
                    type: String,
                    values: { value: -> { ::Market.spot.active.pluck(:base_unit) }, message: 'market.market.doesnt_exist' },
@@ -137,8 +137,8 @@ module API
         params do
           optional :market,
                    type: String,
-                   values: {  value: -> { ::Market.spot.pluck(:ticker) }, message: 'market.market.doesnt_exist' },
-                   desc: -> { V2::Entities::Market.documentation[:id] }
+                   values: {  value: -> { ::Market.spot.active.pluck(:symbol) }, message: 'market.market.doesnt_exist' },
+                   desc: -> { V2::Entities::Market.documentation[:symbol] }
           optional :side,
                    type: String,
                    values: %w(sell buy),

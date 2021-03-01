@@ -195,7 +195,7 @@ describe API::V2::Public::Markets, type: :request do
       let!(:market) { create(:market, :xagm_cxusd) }
 
       it 'returns information about specified market' do
-        get "/api/v2/public/markets/#{market.ticker}/order-book"
+        get "/api/v2/public/markets/#{market.symbol}/order-book"
         expect(response).to be_successful
 
         result = JSON.parse(response.body)
@@ -261,7 +261,7 @@ describe API::V2::Public::Markets, type: :request do
       let!(:market) { create(:market, :xagm_cxusd) }
 
       it 'returns information about specified market' do
-        get "/api/v2/public/markets/#{market.ticker}/depth"
+        get "/api/v2/public/markets/#{market.symbol}/depth"
         expect(response).to be_successful
 
         result = JSON.parse(response.body)
@@ -603,7 +603,7 @@ describe API::V2::Public::Markets, type: :request do
         let!(:market) { create(:market, :xagm_cxusd) }
 
         it 'returns information about specified market' do
-          get "/api/v2/public/markets/#{market.ticker}/tickers"
+          get "/api/v2/public/markets/#{market.symbol}/tickers"
           expect(response).to be_successful
           expect(JSON.parse(response.body)['ticker']).to include(expected_ticker)
         end
@@ -710,7 +710,7 @@ describe API::V2::Public::Markets, type: :request do
       let!(:market) { create(:market, :xagm_cxusd) }
 
       it 'returns information about specified market' do
-        get "/api/v2/public/markets/#{market.ticker}/trades"
+        get "/api/v2/public/markets/#{market.symbol}/trades"
         expect(response).to be_successful
         expect(JSON.parse(response.body).size).to eq 0
       end

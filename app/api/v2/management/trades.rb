@@ -13,13 +13,13 @@ module API
         params do
           optional :uid,      type: String,  desc: 'The shared user ID.'
           optional :market, type: String,
-                   values: { value: -> { ::Market.spot.active.pluck(:ticker) },
+                   values: { value: -> { ::Market.spot.active.pluck(:symbol) },
                    message: 'Market does not exist' }
           optional :page,     type: Integer, default: 1,   integer_gt_zero: true, desc: 'The page number (defaults to 1).'
           optional :limit,    type: Integer, default: 100, range: 1..1000, desc: 'The number of objects per page (defaults to 100, maximum is 1000).'
         end
         post '/trades' do
-          market = ::Market.find_spot_by_ticker(params[:market]) if params[:market].present?
+          market = ::Market.find_spot_by_symbol(params[:market]) if params[:market].present?
           member = Member.find_by!(uid: params[:uid]) if params[:uid].present?
 
           Trade

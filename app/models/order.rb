@@ -5,7 +5,7 @@ require 'csv'
 
 class Order < ApplicationRecord
 
-  belongs_to :market, -> { where(type: 'spot') }, foreign_key: :market_id, primary_key: :ticker, required: true
+  belongs_to :market, -> { where(type: 'spot') }, foreign_key: :market_id, primary_key: :symbol, required: true
   belongs_to :member, required: true
   attribute :uuid, :uuid if Rails.configuration.database_adapter.downcase != 'PostgreSQL'.downcase
 

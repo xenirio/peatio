@@ -7,14 +7,14 @@ describe API::V2::Admin::Markets, type: :request do
   let(:level_3_member_token) { jwt_for(level_3_member) }
 
   describe 'GET /api/v2/admin/markets/:id' do
-    let(:market) { Market.find_spot_by_ticker('btcusd') }
+    let(:market) { Market.find_spot_by_symbol('btcusd') }
 
     it 'returns information about specified market' do
-      api_get "/api/v2/admin/markets/#{market.ticker}", token: token
+      api_get "/api/v2/admin/markets/#{market.symbol}", token: token
       expect(response).to be_successful
 
       result = JSON.parse(response.body)
-      expect(result.fetch('id')).to eq market.ticker
+      expect(result.fetch('id')).to eq market.symbol
       expect(result.fetch('base_unit')).to eq market.base_currency
       expect(result.fetch('quote_unit')).to eq market.quote_currency
       expect(result.fetch('data')).to eq market.data
@@ -33,11 +33,11 @@ describe API::V2::Admin::Markets, type: :request do
       let!(:market) { create(:market, :xagm_cxusd) }
 
       it 'returns information about specified market' do
-        api_get "/api/v2/admin/markets/#{market.ticker}", token: token
+        api_get "/api/v2/admin/markets/#{market.symbol}", token: token
 
         expect(response).to be_successful
         result = JSON.parse(response.body)
-        expect(result.fetch('id')).to eq market.ticker
+        expect(result.fetch('id')).to eq market.symbol
         expect(result.fetch('base_unit')).to eq market.base_currency
         expect(result.fetch('quote_unit')).to eq market.quote_currency
         expect(result.fetch('data')).to eq market.data
@@ -52,7 +52,7 @@ describe API::V2::Admin::Markets, type: :request do
     end
 
     it 'return error in case of not permitted ability' do
-      api_get "/api/v2/admin/markets/#{market.ticker}", token: level_3_member_token
+      api_get "/api/v2/admin/markets/#{market.symbol}", token: level_3_member_token
       expect(response.code).to eq '403'
       expect(response).to include_api_error('admin.ability.not_permitted')
     end
@@ -200,7 +200,7 @@ describe API::V2::Admin::Markets, type: :request do
 
   describe 'POST /api/v2/admin/markets/update' do
     it 'updates attributes' do
-      api_post '/api/v2/admin/markets/update', params: { id: Market.first.ticker, amount_precision: 3, price_precision: 5, min_amount: 0.1, min_price: 0.1 }, token: token
+      api_post '/api/v2/admin/markets/update', params: { id: Market.first.symbol, amount_precision: 3, price_precision: 5, min_amount: 0.1, min_price: 0.1 }, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
@@ -211,7 +211,7 @@ describe API::V2::Admin::Markets, type: :request do
     end
 
     it 'updates data' do
-      api_post '/api/v2/admin/markets/update', params: { id: Market.first.ticker, data: { 'upstream' => { 'driver' => 'opendax' } } }, token: token
+      api_post '/api/v2/admin/markets/update', params: { id: Market.first.symbol, data: { 'upstream' => { 'driver' => 'opendax' } } }, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
@@ -219,14 +219,14 @@ describe API::V2::Admin::Markets, type: :request do
     end
 
     it 'validates data field' do
-      api_post '/api/v2/admin/markets/update', params: { id: Market.first.ticker, data: 'data' }, token: token
+      api_post '/api/v2/admin/markets/update', params: { id: Market.first.symbol, data: 'data' }, token: token
 
       expect(response).to have_http_status 422
       expect(response).to include_api_error('admin.market.invalid_data')
     end
 
     it 'validates position' do
-      api_post '/api/v2/admin/markets/update', params: { id: Market.first.ticker, position: 0 }, token: token
+      api_post '/api/v2/admin/markets/update', params: { id: Market.first.symbol, position: 0 }, token: token
 
       expect(response).to have_http_status 422
       expect(response).to include_api_error('admin.market.invalid_position')
@@ -240,7 +240,7 @@ describe API::V2::Admin::Markets, type: :request do
     end
 
     it 'return error in case of not permitted ability' do
-      api_post '/api/v2/admin/markets/update', params: { id: Market.first.ticker, state: :disabled }, token: level_3_member_token
+      api_post '/api/v2/admin/markets/update', params: { id: Market.first.symbol, state: :disabled }, token: level_3_member_token
 
       expect(response.code).to eq '403'
       expect(response).to include_api_error('admin.ability.not_permitted')

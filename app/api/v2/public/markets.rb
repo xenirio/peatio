@@ -74,8 +74,8 @@ module API
           params do
             requires :market,
                      type: String,
-                     values: { value: -> { ::Market.spot.active.pluck(:ticker) }, message: 'public.market.doesnt_exist' },
-                     desc: -> { V2::Entities::Market.documentation[:ticker] }
+                     values: { value: -> { ::Market.spot.active.pluck(:symbol) }, message: 'public.market.doesnt_exist' },
+                     desc: -> { V2::Entities::Market.documentation[:symbol] }
             optional :asks_limit,
                      type: { value: Integer, message: 'public.order_book.non_integer_ask_limit' },
                      values: { value: 1..200, message: 'public.order_book.invalid_ask_limit' },
@@ -101,8 +101,8 @@ module API
           params do
             requires :market,
                      type: String,
-                     values: { value: -> { ::Market.spot.active.pluck(:ticker) }, message: 'public.market.doesnt_exist' },
-                     desc: -> { V2::Entities::Market.documentation[:ticker] }
+                     values: { value: -> { ::Market.spot.active.pluck(:symbol) }, message: 'public.market.doesnt_exist' },
+                     desc: -> { V2::Entities::Market.documentation[:symbol] }
             optional :limit,
                      type: { value: Integer, message: 'public.trade.non_integer_limit' },
                      values: { value: 1..1000, message: 'public.trade.invalid_limit' },
@@ -126,8 +126,8 @@ module API
           params do
             requires :market,
                      type: String,
-                     values: { value: -> { ::Market.spot.active.pluck(:ticker) }, message: 'public.market.doesnt_exist' },
-                     desc: -> { V2::Entities::Market.documentation[:ticker] }
+                     values: { value: -> { ::Market.spot.active.pluck(:symbol) }, message: 'public.market.doesnt_exist' },
+                     desc: -> { V2::Entities::Market.documentation[:symbol] }
             optional :limit,
                      type: { value: Integer, message: 'public.market_depth.non_integer_limit' },
                      values: { value: 1..1000, message: 'public.market_depth.invalid_limit' },
@@ -144,8 +144,8 @@ module API
           params do
             requires :market,
                      type: String,
-                     values: { value: -> { ::Market.spot.active.pluck(:ticker) }, message: 'public.market.doesnt_exist' },
-                     desc: -> { V2::Entities::Market.documentation[:ticker] }
+                     values: { value: -> { ::Market.spot.active.pluck(:symbol) }, message: 'public.market.doesnt_exist' },
+                     desc: -> { V2::Entities::Market.documentation[:symbol] }
             optional :period,
                      type: { value: Integer, message: 'public.k_line.non_integer_period' },
                      values: { value: KLineService::AVAILABLE_POINT_PERIODS, message: 'public.k_line.invalid_period' },
@@ -174,7 +174,7 @@ module API
           get "/tickers" do
             Rails.cache.fetch(:markets_tickers, expires_in: 60) do
               ::Market.spot.active.ordered.inject({}) do |h, m|
-                h[m.ticker] = format_ticker TickersService[m].ticker
+                h[m.symbol] = format_ticker TickersService[m].ticker
                 h
               end
             end
@@ -185,8 +185,8 @@ module API
           params do
             requires :market,
                      type: String,
-                     values: { value: -> { ::Market.spot.pluck(:ticker) }, message: 'public.market.doesnt_exist' },
-                     desc: -> { V2::Entities::Market.documentation[:id] }
+                     values: { value: -> { ::Market.spot.active.pluck(:symbol) }, message: 'public.market.doesnt_exist' },
+                     desc: -> { V2::Entities::Market.documentation[:symbol] }
           end
           get "/:market/tickers/", requirements: { market: /[\w\.\-]+/ } do
             present format_ticker(TickersService[params[:market]].ticker),

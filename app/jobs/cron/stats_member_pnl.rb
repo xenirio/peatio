@@ -135,7 +135,7 @@ module Jobs::Cron
         market = Market.spot.find_by(base_unit: currency_id, quote_unit: pnl_currency_id)
         raise Error, "There is no market #{currency_id}/#{pnl_currency_id}" unless market.present?
 
-        market.ticker
+        market.symbol
       end
 
       def price_at(currency_id, pnl_currency_id, at)

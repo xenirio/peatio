@@ -12,8 +12,8 @@ module API
           success: API::V2::Entities::Trade
         params do
           optional :market,
-                   values: { value: ->(v) { (Array.wrap(v) - ::Market.active.pluck(:ticker)).blank? }, message: 'market.market.doesnt_exist' },
-                   desc: -> { V2::Entities::Market.documentation[:ticker] }
+                   values: { value: ->(v) { (Array.wrap(v) - ::Market.active.pluck(:symbol)).blank? }, message: 'market.market.doesnt_exist' },
+                   desc: -> { V2::Entities::Market.documentation[:symbol] }
           use :trade_filters
         end
         get '/trades' do
