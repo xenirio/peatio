@@ -13,7 +13,7 @@ module API
         end
         get "/trades/:market_pair" do
           market = ::Market.find_spot_by_ticker(params[:market_pair])
-          Trade.public_from_influx(market.id).map { |trade| format_trade(trade) }
+          Trade.public_from_influx(market.ticker).map { |trade| format_trade(trade) }
         end
       end
     end

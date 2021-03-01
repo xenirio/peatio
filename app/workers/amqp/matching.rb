@@ -75,17 +75,17 @@ module Workers
       end
 
       def create_engine(market)
-        engines[market.id] = ::Matching::Engine.new(market, @options)
+        engines[market.ticker] = ::Matching::Engine.new(market, @options)
       end
 
       def load_orders(market)
-        ::Order.active.with_market(market.id).order('id asc').each do |order|
+        ::Order.active.with_market(market.ticker).order('id asc').each do |order|
           submit build_order(order.to_matching_attributes)
         end
       end
 
       def start_engine(market)
-        engine = engines[market.id]
+        engine = engines[market.ticker]
         if engine.mode == :dryrun
           if engine.queue.empty?
             engine.shift_gears :run
@@ -106,7 +106,7 @@ module Workers
             end
           end
         else
-          Rails.logger.info { "#{market.id} engine already started. mode=#{engine.mode}" }
+          Rails.logger.info { "#{market.ticker} engine already started. mode=#{engine.mode}" }
         end
       end
 

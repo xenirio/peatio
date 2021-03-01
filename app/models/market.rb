@@ -172,11 +172,11 @@ class Market < ApplicationRecord
     # end
 
     def find_spot_by_ticker(market_ticker)
-      Market.find_by(ticker: market_ticker, type: 'spot')
+      Market.find_by!(ticker: market_ticker, type: 'spot')
     end
 
     def find_qe_by_ticker(market_ticker)
-      Market.find_by(ticker: market_ticker, type: 'qe')
+      Market.find_by!(ticker: market_ticker, type: 'qe')
     end
   end
 

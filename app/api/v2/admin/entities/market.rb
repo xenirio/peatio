@@ -7,10 +7,10 @@ module API
       module Entities
         class Market < API::V2::Entities::Market
           expose(
-            :market_type,
+            :type,
             documentation: {
               type: String,
-              desc: 'Kind of market.'
+              desc: 'Type of market.'
             }
           )
 

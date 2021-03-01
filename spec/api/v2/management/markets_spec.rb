@@ -21,7 +21,7 @@ describe API::V2::Management::Markets, type: :request do
     let(:market) { Market.find_spot_by_ticker(:btcusd) }
 
     it 'should validate min_price param' do
-      data.merge!(id: market.id, min_price: -10.0)
+      data.merge!(id: market.ticker, min_price: -10.0)
       request
 
       expect(response).to have_http_status 422
@@ -29,7 +29,7 @@ describe API::V2::Management::Markets, type: :request do
     end
 
     it 'should validate min_amount param' do
-      data.merge!(id: market.id, min_amount: -123.0)
+      data.merge!(id: market.ticker, min_amount: -123.0)
       request
 
       expect(response).to have_http_status 422
@@ -37,7 +37,7 @@ describe API::V2::Management::Markets, type: :request do
     end
 
     it 'should validate amount_precision param' do
-      data.merge!(id: market.id, amount_precision: -100.0)
+      data.merge!(id: market.ticker, amount_precision: -100.0)
       request
 
       expect(response).to have_http_status 422
@@ -45,7 +45,7 @@ describe API::V2::Management::Markets, type: :request do
     end
 
     it 'should validate price_precision param' do
-      data.merge!(id: market.id, price_precision: -100.0)
+      data.merge!(id: market.ticker, price_precision: -100.0)
       request
 
       expect(response).to have_http_status 422
@@ -53,7 +53,7 @@ describe API::V2::Management::Markets, type: :request do
     end
 
     it 'should validate max_price param' do
-      data.merge!(id: market.id, max_price: -1)
+      data.merge!(id: market.ticker, max_price: -1)
       request
 
       expect(response).to have_http_status 422
@@ -61,7 +61,7 @@ describe API::V2::Management::Markets, type: :request do
     end
 
     it 'should validate position param' do
-      data.merge!(id: market.id, position: -100.0)
+      data.merge!(id: market.ticker, position: -100.0)
       request
 
       expect(response).to have_http_status 422
@@ -69,7 +69,7 @@ describe API::V2::Management::Markets, type: :request do
     end
 
     it 'should validate state param' do
-      data.merge!(id: market.id, state: 'blah-blah')
+      data.merge!(id: market.ticker, state: 'blah-blah')
       request
 
       expect(response).to have_http_status 422
@@ -84,13 +84,13 @@ describe API::V2::Management::Markets, type: :request do
     end
 
     it 'should update market' do
-      data.merge!(id: market.id, state: 'disabled', min_amount: '0.1')
+      data.merge!(id: market.ticker, state: 'disabled', min_amount: '0.1')
       request
 
       expect(response).to have_http_status 200
 
       result = JSON.parse(response.body)
-      expect(result.fetch('id')).to eq market.id
+      expect(result.fetch('id')).to eq market.ticker
       expect(result.fetch('state')).to eq 'disabled'
       expect(result.fetch('min_amount')).to eq '0.1'
     end

@@ -15,7 +15,7 @@ module API
                    values: { value: ->(v) { Member.exists?(uid: v) }, message: 'management.orders.uid_doesnt_exist' },
                    desc: 'Filter order by owner uid'
           optional :market,
-                   values: { value: -> { ::Market.ids }, message: 'management.orders.market_doesnt_exist' },
+                   values: { value: -> { ::Market.spot.pluck(:ticker) }, message: 'management.orders.market_doesnt_exist' },
                    desc: -> { API::V2::Management::Entities::Market.documentation[:id][:desc] }
           optional :state,
                    values: { value: -> { ::Order.state.values }, message: 'management.orders.invalid_state' },
@@ -98,7 +98,7 @@ module API
             orders.map(&:trigger_internal_cancellation)
           else
             filters = {
-              market_id: market.id,
+              market_id: market.ticker,
               member_uid: params[:uid]
             }.compact
 

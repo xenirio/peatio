@@ -50,7 +50,7 @@ describe Jobs::Cron::StatsMemberPnl do
 
     it 'when market exists' do
       market = Market.first
-      expect(Jobs::Cron::StatsMemberPnl.conversion_market(market.base_unit, market.quote_unit)).to eq market.id
+      expect(Jobs::Cron::StatsMemberPnl.conversion_market(market.base_unit, market.quote_unit)).to eq market.ticker
     end
   end
 

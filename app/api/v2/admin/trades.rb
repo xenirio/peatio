@@ -16,7 +16,7 @@ module API
           success: API::V2::Admin::Entities::Trade
         params do
           optional :market,
-                   values: { value: -> { ::Market.ids }, message: 'admin.market.doesnt_exist' },
+                   values: { value: -> { ::Market.spot.pluck(:ticker) }, message: 'admin.market.doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:id][:desc] }
           optional :order_id,
                    type: Integer,

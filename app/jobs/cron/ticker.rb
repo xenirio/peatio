@@ -7,8 +7,8 @@ module Jobs
         Market.active.each do |market|
           service = TickersService[market]
           ticker = service.ticker
-          @tickers[market.id] = ticker
-          @cache_tickers[market.id] = format_ticker ticker
+          @tickers[market.ticker] = ticker
+          @cache_tickers[market.ticker] = format_ticker ticker
         end
         Rails.logger.info { "Publish tickers: #{@tickers}" }
         Rails.cache.write(:markets_tickers, @cache_tickers)
