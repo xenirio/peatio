@@ -75,7 +75,7 @@ module API
                    values: { value: ->(v) { Member.exists?(uid: v) }, message: 'management.orders.uid_doesnt_exist' },
                    desc: 'Filter order by owner uid'
           requires :market,
-                   values: { value: -> { ::Market.active.ids }, message: 'management.order.market_doesnt_exist' },
+                   values: { value: -> { ::Market.spot.active.pluck(:ticker) }, message: 'management.order.market_doesnt_exist' },
                    desc: -> { API::V2::Management::Entities::Market.documentation[:id][:desc] }
         end
 

@@ -58,7 +58,7 @@ module API
           success: API::V2::Admin::Entities::Market
         params do
           use :pagination
-          optional :market_type,
+          optional :type,
                    type: { value: String, message: 'admin.market.non_string_market_type' },
                    values: { value: -> { ::Market::TYPES }, message: 'admin.market.invalid_market_type' },
                    default: 'spot'
@@ -73,7 +73,7 @@ module API
         get '/markets' do
           admin_authorize! :read, ::Market
 
-          result = ::Market.where(market_type: params[:market_type])
+          result = ::Market.where(type: params[:type])
                            .order(params[:order_by] => params[:ordering])
 
           present paginate(result), with: API::V2::Admin::Entities::Market
@@ -112,7 +112,7 @@ module API
                    type: { value: BigDecimal, message: 'admin.market.non_decimal_min_amount' },
                    values: { value: -> (p){ p && p >= 0 }, message: 'admin.market.invalid_min_amount' },
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:min_amount][:desc] }
-          optional :market_type,
+          optional :type,
                    type: { value: String, message: 'admin.market.non_string_market_type' },
                    values: { value: -> { ::Market::TYPES }, message: 'admin.market.invalid_market_type' },
                    default: 'spot'
@@ -147,7 +147,7 @@ module API
           use :update_market_params
           requires :id,
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:id][:desc] }
-          optional :market_type,
+          optional :type,
                    type: { value: String, message: 'admin.market.non_string_market_type' },
                    values: { value: -> { ::Market::TYPES }, message: 'admin.market.invalid_market_type' }
           optional :engine_id,

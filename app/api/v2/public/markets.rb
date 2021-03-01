@@ -89,8 +89,8 @@ module API
           end
 
           get ":market/order-book", requirements: { market: /[\w\.\-]+/ } do
-            asks = OrderAsk.active.with_market(params[:market], 'spot').matching_rule.limit(params[:asks_limit])
-            bids = OrderBid.active.with_market(params[:market], 'spot').matching_rule.limit(params[:bids_limit])
+            asks = OrderAsk.active.with_market(params[:market]).matching_rule.limit(params[:asks_limit])
+            bids = OrderBid.active.with_market(params[:market]).matching_rule.limit(params[:bids_limit])
             book = OrderBook.new asks, bids
             present book, with: API::V2::Entities::OrderBook
           end
@@ -174,7 +174,7 @@ module API
           get "/tickers" do
             Rails.cache.fetch(:markets_tickers, expires_in: 60) do
               ::Market.spot.active.ordered.inject({}) do |h, m|
-                h[m.id] = format_ticker TickersService[m].ticker
+                h[m.ticker] = format_ticker TickersService[m].ticker
                 h
               end
             end
@@ -185,7 +185,7 @@ module API
           params do
             requires :market,
                      type: String,
-                     values: { value: -> { ::Market.active.ids }, message: 'public.market.doesnt_exist' },
+                     values: { value: -> { ::Market.spot.pluck(:ticker) }, message: 'public.market.doesnt_exist' },
                      desc: -> { V2::Entities::Market.documentation[:id] }
           end
           get "/:market/tickers/", requirements: { market: /[\w\.\-]+/ } do

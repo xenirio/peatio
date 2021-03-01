@@ -10,11 +10,11 @@ describe Workers::AMQP::Matching do
 
   context 'engines' do
     it 'should get all engines' do
-      expect(subject.engines.keys.sort).to eq Market.pluck(:id).sort
+      expect(subject.engines.keys.sort).to eq Market.spot.pluck(:ticker).sort
     end
 
     it 'should started all engines' do
-      expect(subject.engines.values.map(&:mode)).to eq Array.new(Market.count, :run)
+      expect(subject.engines.values.map(&:mode)).to eq Array.new(Market.spot.count, :run)
     end
   end
 

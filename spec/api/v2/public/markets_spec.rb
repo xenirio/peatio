@@ -17,7 +17,7 @@ describe API::V2::Public::Markets, type: :request do
       expect(response).to be_successful
       result = JSON.parse(response.body)
 
-      expect(result.size).to eq Market.enabled.size
+      expect(result.size).to eq Market.spot.enabled.size
 
       result.each do |market|
         expect(market.keys).to contain_exactly(*expected_keys)
@@ -43,7 +43,7 @@ describe API::V2::Public::Markets, type: :request do
 
         expect(response).to be_successful
 
-        expect(response.headers.fetch('Total').to_i).to eq Market.enabled.size
+        expect(response.headers.fetch('Total').to_i).to eq Market.spot.enabled.size
         expect(result.size).to eq(2)
       end
     end
@@ -55,7 +55,7 @@ describe API::V2::Public::Markets, type: :request do
           expect(response).to be_successful
           result = JSON.parse(response.body)
 
-          expect(result.size).to eq Market.enabled.where(base_unit: :btc).size
+          expect(result.size).to eq Market.spot.enabled.where(base_unit: :btc).size
           result.each do |market|
             expect(market['base_unit']).to eq 'btc'
           end
@@ -66,7 +66,7 @@ describe API::V2::Public::Markets, type: :request do
           expect(response).to be_successful
           result = JSON.parse(response.body)
 
-          expect(result.size).to eq Market.enabled.where(quote_unit: :usd).size
+          expect(result.size).to eq Market.spot.enabled.where(quote_unit: :usd).size
           result.each do |market|
             expect(market['quote_unit']).to eq 'usd'
           end
@@ -77,7 +77,7 @@ describe API::V2::Public::Markets, type: :request do
           expect(response).to be_successful
           result = JSON.parse(response.body)
 
-          expect(result.size).to eq Market.enabled.size
+          expect(result.size).to eq Market.spot.enabled.size
         end
       end
 
