@@ -38,5 +38,11 @@ class AddMarketType < ActiveRecord::Migration[5.2]
     end
 
     drop_table :legacy_markets
+
+    add_column(:orders, :market_type, :string, null: false, default: "spot")
+    remove_index(:orders, ["type", "market_id"]) if index_exists?(:orders, ["type", "market_id"])
+    remove_index(:orders, ["type", "state","market_id"]) if index_exists?(:orders, ["type", "state","market_id"])
+    add_index(:orders, ["type", "market_id", "market_type"]) unless index_exists?(:orders, ["type", "market_id", "market_type"])
+    add_index(:orders, ["type", "state","market_id", "market_type"]) unless index_exists?(:orders, ["type", "state","market_id", "market_type"])
   end
 end

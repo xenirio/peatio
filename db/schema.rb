@@ -272,11 +272,12 @@ ActiveRecord::Schema.define(version: 2021_02_25_123519) do
     t.integer "trades_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "market_type", default: "spot", null: false
     t.index ["member_id"], name: "index_orders_on_member_id"
     t.index ["state"], name: "index_orders_on_state"
-    t.index ["type", "market_id"], name: "index_orders_on_type_and_market_id"
+    t.index ["type", "market_id", "market_type"], name: "index_orders_on_type_and_market_id_and_market_type"
     t.index ["type", "member_id"], name: "index_orders_on_type_and_member_id"
-    t.index ["type", "state", "market_id"], name: "index_orders_on_type_and_state_and_market_id"
+    t.index ["type", "state", "market_id", "market_type"], name: "index_orders_on_type_and_state_and_market_id_and_market_type"
     t.index ["type", "state", "member_id"], name: "index_orders_on_type_and_state_and_member_id"
     t.index ["updated_at"], name: "index_orders_on_updated_at"
     t.index ["uuid"], name: "index_orders_on_uuid", unique: true

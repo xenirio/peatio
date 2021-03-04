@@ -5,7 +5,7 @@ require 'csv'
 
 class Order < ApplicationRecord
 
-  belongs_to :market, -> { where(type: 'spot') }, foreign_key: :market_id, primary_key: :symbol, required: true
+  belongs_to :market, ->(order) { where(type: order.market_type) }, foreign_key: :market_id, primary_key: :symbol, required: true
   belongs_to :member, required: true
   attribute :uuid, :uuid if Rails.configuration.database_adapter.downcase != 'PostgreSQL'.downcase
 
@@ -72,6 +72,7 @@ class Order < ApplicationRecord
   scope :done, -> { with_state(:done) }
   scope :active, -> { with_state(:wait) }
   scope :with_market, ->(market) { where(market_id: market) }
+  scope :spot, -> { where(market_type: 'spot') }
 
   # Custom ransackers.
 

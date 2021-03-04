@@ -32,6 +32,11 @@ describe API::V2::Market::Orders, type: :request do
       expect(response).to include_api_error('market.market.doesnt_exist')
     end
 
+    it 'validates market param based on type' do
+      api_get '/api/v2/market/orders', params: { market: 'btcusd' }, token: token
+      expect(response).to have_http_status 200
+    end
+
     it 'validates state param' do
       api_get '/api/v2/market/orders', params: { market: 'btcusd', state: 'test' }, token: token
       expect(response.code).to eq '422'
