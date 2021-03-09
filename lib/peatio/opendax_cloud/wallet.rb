@@ -75,18 +75,15 @@ module OpendaxCloud
       # Verify JWT signature
       params = JWT.decode(request.body.string, public_key, true, { algorithm: 'ES256' }).first.with_indifferent_access
 
-      event = request.params[:event]
-      amount = event == 'deposit' ? convert_from_base_unit(params[:amount]) : params[:amount].to_d
-
       [
         Peatio::Transaction.new(
           currency_id: params[:currency],
-          amount: amount,
+          amount: params[:amount].to_d,
           hash: params[:blockchain_txid],
           # If there is no rid field, it means we have deposit in payload
           to_address: params[:rid] || params[:address],
           txout: 0,
-          status: translate_state(event, params[:state]),
+          status: translate_state(request.params[:event], params[:state]),
           options: {
             tid: params[:tid]
           })

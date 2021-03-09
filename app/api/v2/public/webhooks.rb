@@ -5,6 +5,8 @@ module API
     module Public
       class Webhooks < Grape::API
         helpers ::API::V2::WebhooksHelpers
+        content_type :json, 'application/json'
+        content_type :txt, 'text/plain'
 
         desc 'Webhook controller'
         params do
