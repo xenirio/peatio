@@ -106,8 +106,8 @@ module API
             withdraw = Withdraws::Coin.find_by(tid: transaction.options[:tid])
             if withdraw.present? && withdraw.txid.blank?
               withdraw.txid = transaction.hash
-              withdraw.dispatch!
               withdraw.save!
+              withdraw.dispatch!
             end
           end
 
