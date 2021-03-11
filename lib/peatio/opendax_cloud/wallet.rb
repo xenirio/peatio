@@ -49,9 +49,9 @@ module OpendaxCloud
     def create_transaction!(transaction)
       response = client.rest_api(:post, '/tx/send', {
                         currency_id: currency_id,
-                        to: transaction.to_address,
+                        to_address: transaction.to_address,
                         amount: transaction.amount,
-                        options: transaction.options
+                        tid: transaction.options[:tid]
                       })
       transaction.options = response['options']
       transaction
