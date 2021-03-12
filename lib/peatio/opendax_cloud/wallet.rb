@@ -51,8 +51,8 @@ module OpendaxCloud
                         currency_id: currency_id,
                         to_address: transaction.to_address,
                         amount: transaction.amount,
-                        tid: transaction.options[:tid]
-                      })
+                        tid: transaction.options.try(:tid)
+                  }.compact)
       transaction.options = response['options']
       transaction
     rescue OpendaxCloud::Client::Error => e

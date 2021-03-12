@@ -112,9 +112,9 @@ describe OpendaxCloud::Wallet do
 
       let(:request_params) do
         {
-          currency_id:    'eth',
-          to:           transaction.to_address,
-          amount:       transaction.amount.to_d,
+          currency_id: 'eth',
+          to_address:  transaction.to_address,
+          amount:      transaction.amount.to_d,
         }
       end
 
@@ -228,7 +228,7 @@ describe OpendaxCloud::Wallet do
         it 'returns transactions' do
           res = wallet.trigger_webhook_event(OpenStruct.new({'body': StringIO.new(jwt_token), 'params': {'event': 'deposit'}}))
 
-          expect(res[0].amount).to eq 1.0
+          expect(res[0].amount).to eq payload[:amount].to_d
           expect(res[0].currency_id).to eq payload[:currency]
           expect(res[0].hash).to eq payload[:blockchain_txid]
           expect(res[0].status).to eq 'pending'
