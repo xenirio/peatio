@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_02_120855) do
+ActiveRecord::Schema.define(version: 2021_03_29_072124) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -419,15 +419,22 @@ ActiveRecord::Schema.define(version: 2021_03_02_120855) do
   end
 
   create_table "triggers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.bigint "order_id", null: false
-    t.integer "order_type", limit: 1, null: false, unsigned: true
-    t.binary "value", limit: 128, null: false
-    t.integer "state", limit: 1, default: 0, null: false, unsigned: true
+    t.integer "market_id", null: false, unsigned: true
+    t.string "market_type", default: "spot", null: false
+    t.decimal "trigger_price", precision: 32, scale: 16, null: false
+    t.string "side", limit: 10, null: false
+    t.decimal "amount", precision: 32, scale: 16, null: false
+    t.decimal "price", precision: 32, scale: 16
+    t.integer "member_id", unsigned: true
+    t.integer "order_id", unsigned: true
+    t.integer "status", null: false, unsigned: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["market_id", "market_type"], name: "index_triggers_on_market_id_and_market_type"
+    t.index ["market_id"], name: "index_triggers_on_market_id"
+    t.index ["member_id"], name: "index_triggers_on_member_id"
     t.index ["order_id"], name: "index_triggers_on_order_id"
-    t.index ["order_type"], name: "index_triggers_on_order_type"
-    t.index ["state"], name: "index_triggers_on_state"
+    t.index ["status"], name: "index_triggers_on_status"
   end
 
   create_table "wallets", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
