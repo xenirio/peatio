@@ -24,6 +24,7 @@ module API
           expose :txid, as: :blockchain_txid, if: -> (d, _) { d.currency.coin? }, documentation: { type: String, desc: 'The transaction ID on the Blockchain (coin only).' }
           expose :confirmations, as: :blockchain_confirmations, if: -> (d, _) { d.currency.coin? }, documentation: { type: String, desc: 'The number of transaction confirmations on the Blockchain (coin only).' }
           expose :transfer_type, documentation: { type: String, desc: 'deposit transfer_type.' }
+          expose :blockchain_key, documentation: { type: String, desc: 'blockchain key' }
         end
       end
     end

@@ -69,6 +69,7 @@ class Beneficiary < ApplicationRecord
 
   belongs_to :currency, required: true
   belongs_to :member, required: true
+  belongs_to :blockchain, foreign_key: :blockchain_key
 
   # == Validations ==========================================================
 

@@ -87,6 +87,10 @@ module API
                    type: String,
                    values: { value: ->(v) { v.size <= 256 }, message: 'account.withdraw.too_long_note' },
                    desc: 'Optional user metadata to be applied to the transaction. Used to tag transactions with memorable comments.'
+          requires :blockchain_key,
+                   type: { value: String, message: 'account.withdraw.invalid_blockchain' },
+                   allow_blank: false,
+                   desc: 'Blockchain key of the requested withdrawal'
         end
         post '/withdraws' do
           user_authorize! :create, ::Withdraw
@@ -120,7 +124,8 @@ module API
             sum:         params[:amount],
             member:      current_user,
             currency:    currency,
-            note:        params[:note]
+            note:        params[:note],
+            blockchain_key: params[:blockchain_key]
           withdraw.save!
           withdraw.with_lock { withdraw.accept! }
           present withdraw, with: API::V2::Entities::Withdraw

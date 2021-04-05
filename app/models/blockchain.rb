@@ -2,7 +2,8 @@
 # frozen_string_literal: true
 
 class Blockchain < ApplicationRecord
-  has_many :currencies, foreign_key: :blockchain_key, primary_key: :key
+  # has_many :currencies, foreign_key: :blockchain_key, primary_key: :key
+  has_and_belongs_to_many :currencies
   has_many :wallets, foreign_key: :blockchain_key, primary_key: :key
   has_many :whitelisted_smart_contracts, foreign_key: :blockchain_key, primary_key: :key
 

@@ -29,6 +29,7 @@ module API
           expose :created_at, format_with: :iso8601, documentation: { type: String, desc: 'The datetime when withdraw was created.' }
           expose :txid, as: :blockchain_txid, documentation: { type: String, desc: 'The transaction ID on the Blockchain (coin only).' }, if: -> (w, _) { w.currency.coin? }
           expose :transfer_type, documentation: { type: String, desc: 'withdraw transfer_type.' }
+          expose :blockchain_key, documentation: { type: String, desc: 'blockchain key' }
         end
       end
     end

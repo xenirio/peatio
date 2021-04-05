@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_02_120855) do
+ActiveRecord::Schema.define(version: 2021_04_05_055953) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -80,8 +80,19 @@ ActiveRecord::Schema.define(version: 2021_03_02_120855) do
     t.string "status", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "description"
+    t.string "warning"
+    t.string "protocol"
     t.index ["key"], name: "index_blockchains_on_key", unique: true
     t.index ["status"], name: "index_blockchains_on_status"
+  end
+
+  create_table "blockchains_currencies", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "blockchain_id"
+    t.integer "currency_id"
+    t.index ["blockchain_id", "currency_id"], name: "index_blockchains_currencies_on_blockchain_id_and_currency_id", unique: true
+    t.index ["blockchain_id"], name: "index_blockchains_currencies_on_blockchain_id"
+    t.index ["currency_id"], name: "index_blockchains_currencies_on_currency_id"
   end
 
   create_table "currencies", id: :string, limit: 10, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -140,6 +151,7 @@ ActiveRecord::Schema.define(version: 2021_03_02_120855) do
     t.datetime "created_at", precision: 3, null: false
     t.datetime "updated_at", precision: 3, null: false
     t.datetime "completed_at", precision: 3
+    t.string "blockchain_key"
     t.index ["aasm_state", "member_id", "currency_id"], name: "index_deposits_on_aasm_state_and_member_id_and_currency_id"
     t.index ["currency_id", "txid", "txout"], name: "index_deposits_on_currency_id_and_txid_and_txout", unique: true
     t.index ["currency_id"], name: "index_deposits_on_currency_id"
@@ -489,6 +501,7 @@ ActiveRecord::Schema.define(version: 2021_03_02_120855) do
     t.datetime "created_at", precision: 3, null: false
     t.datetime "updated_at", precision: 3, null: false
     t.datetime "completed_at", precision: 3
+    t.string "blockchain_key"
     t.index ["aasm_state"], name: "index_withdraws_on_aasm_state"
     t.index ["currency_id", "txid"], name: "index_withdraws_on_currency_id_and_txid", unique: true
     t.index ["currency_id"], name: "index_withdraws_on_currency_id"

@@ -17,7 +17,7 @@ class Deposit < ApplicationRecord
 
   belongs_to :currency, required: true
   belongs_to :member, required: true
-
+  belongs_to :blockchain, foreign_key: :blockchain_key
   acts_as_eventable prefix: 'deposit', on: %i[create update]
 
   validates :tid, presence: true, uniqueness: { case_sensitive: false }

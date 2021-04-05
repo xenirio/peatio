@@ -29,7 +29,7 @@ class Withdraw < ApplicationRecord
 
   belongs_to :currency, required: true
   belongs_to :member, required: true
-
+  belongs_to :blockchain, foreign_key: :blockchain_key
   # Optional beneficiary association gives ability to support both in-peatio
   # beneficiaries and managed by third party application.
   belongs_to :beneficiary, optional: true
