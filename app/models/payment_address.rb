@@ -16,6 +16,9 @@ class PaymentAddress < ApplicationRecord
 
   belongs_to :wallet
   belongs_to :member
+  belongs_to :blockchain, foreign_key: :blockchain_key
+
+  alias_attribute :code, :id
 
   before_validation do
     next if blockchain_api&.case_sensitive?
@@ -32,7 +35,7 @@ class PaymentAddress < ApplicationRecord
   end
 
   def enqueue_address_generation
-    AMQP::Queue.enqueue(:deposit_coin_address, { member_id: member.id, wallet_id: wallet.id }, { persistent: true })
+    AMQP::Queue.enqueue(:deposit_coin_address, { member_id: member.id, wallet_id: wallet.id, blockchain_key: blockchain.key}, { persistent: true })
   end
 
   def format_address(format)
@@ -51,6 +54,10 @@ class PaymentAddress < ApplicationRecord
     ::AMQP::Queue.enqueue_event('private', member.uid, :deposit_address, type: :create,
                           currencies: wallet.currencies.codes,
                           address:  address)
+  end
+
+  def blockchain
+    Rails.cache.fetch("#{code}_blockchain", expires_in: 60) { Blockchain.find_by(key: blockchain_key) }
   end
 end
 

@@ -92,7 +92,7 @@ module API
                      desc: 'Address format legacy/cash'
           end
         end
-        get '/deposit_address/:currency', requirements: { currency: /[\w\.\-]+/ } do
+        get '/deposit_address/:currency/:blockchain_key', requirements: { currency: /[\w\.\-]+/ } do
           user_authorize! :read, ::PaymentAddress
 
           currency = Currency.find(params[:currency])
@@ -107,7 +107,13 @@ module API
             error!({ errors: ['account.wallet.not_found'] }, 422)
           end
 
-          payment_address = current_user.payment_address(wallet.id)
+          blockchain_key = Blockchain.find_by_key(params[:blockchain_key])
+
+          unless blockchain_key.present?
+            error!({ errors: ['account.currency.blockchain_key.not_found'] }, 422)
+          end
+
+          payment_address = current_user.payment_address(wallet.id, blockchain_key.key)
           present payment_address, with: API::V2::Entities::PaymentAddress, address_format: params[:address_format]
         end
       end

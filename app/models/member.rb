@@ -88,15 +88,15 @@ class Member < ApplicationRecord
     trades.each(&:revert_trade!)
   end
 
-  def payment_address(wallet_id, remote = false)
+  def payment_address(wallet_id, blockchain_key, remote = false)
     wallet = Wallet.find(wallet_id)
 
     return if wallet.blank?
 
-    pa = PaymentAddress.find_by(member: self, wallet: wallet, remote: remote)
+    pa = PaymentAddress.find_by(member: self, wallet: wallet, blockchain_key: blockchain_key, remote: remote)
 
     if pa.blank?
-      pa = payment_addresses.create!(wallet: wallet)
+      pa = payment_addresses.create!(wallet: wallet, blockchain_key: blockchain_key)
     elsif pa.address.blank?
       pa.enqueue_address_generation
     end

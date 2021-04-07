@@ -26,7 +26,8 @@ class Refund < ApplicationRecord
   end
 
   def process_refund!
-    transaction = WalletService.new(Wallet.deposit.find_by(currency: deposit.currency)).refund!(self)
+    # TODO: Add blockchain key.
+    transaction = WalletService.new(Wallet.deposit.find_by(currency: deposit.currency), 'peatio').refund!(self)
     deposit.refund! if transaction.present?
   end
 end

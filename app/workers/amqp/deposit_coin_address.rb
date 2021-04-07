@@ -26,15 +26,24 @@ module Workers
           return
         end
 
-        wallet_service = WalletService.new(wallet)
+        blockchain_key = Blockchain.find_by_key(payload[:blockchain_key])
+        unless blockchain_key
+          Rails.logger.warn do
+            'Unable to generate deposit address.'\
+            "Deposit Wallet with blockchain key: #{payload[:blockchain_key]} doesn't exist"
+          end
+          return
+        end
 
-        member.payment_address(wallet.id).tap do |pa|
+
+        wallet_service = WalletService.new(wallet, blockchain_key.key)
+
+        member.payment_address(wallet.id, blockchain_key.key).tap do |pa|
           pa.with_lock do
             next if pa.address.present?
 
             # Supply address ID in case of BitGo address generation if it exists.
             result = wallet_service.create_address!(member.uid, pa.details.merge(updated_at: pa.updated_at))
-
             if result.present?
               pa.update!(address: result[:address],
                         secret:  result[:secret],

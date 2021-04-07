@@ -38,6 +38,7 @@ module Workers
                        fee: withdraw.fee.to_s('F'),
                        currency: withdraw.currency.code.upcase,
                        rid: withdraw.rid,
+                       blockchain_key: withdraw.blockchain_key,
                        message: 'Sending witdraw.'
 
           wallet = Wallet.active.joins(:currencies)
@@ -63,7 +64,7 @@ module Workers
           @logger.warn id: withdraw.id,
                        message: 'Sending request to Wallet Service.'
 
-          wallet_service = WalletService.new(wallet)
+          wallet_service = WalletService.new(wallet, withdraw.blockchain_key)
           transaction = wallet_service.build_withdrawal!(withdraw)
 
           @logger.warn id: withdraw.id,

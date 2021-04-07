@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_05_055953) do
+ActiveRecord::Schema.define(version: 2021_04_06_052919) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -312,6 +312,7 @@ ActiveRecord::Schema.define(version: 2021_04_05_055953) do
     t.string "details_encrypted", limit: 1024
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "blockchain_key"
     t.index ["member_id"], name: "index_payment_addresses_on_member_id"
     t.index ["wallet_id"], name: "index_payment_addresses_on_wallet_id"
   end

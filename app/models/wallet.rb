@@ -45,10 +45,10 @@ class Wallet < ApplicationRecord
 
   validates :max_balance, numericality: { greater_than_or_equal_to: 0 }
 
-  validates :blockchain_key, exclusion: { in: lambda { |w|
-    Wallet.where(blockchain_key: w.blockchain_key, kind: 310)
+  validates :blockchain_key, exclusion: { in: ->(w) {
+    Wallet.where(blockchain_key: w.blockchain_key, kind: w.kind)
           .map(&:blockchain_key).uniq
-  } }, message: 'Blockchain hot wallet is already present.', on: :create
+  }, message: 'is present in Wallet already.' }, on: :create
 
   scope :active,   -> { where(status: :active) }
   scope :deposit,  -> { where(kind: kinds(deposit: true, values: true)) }
@@ -116,10 +116,10 @@ class Wallet < ApplicationRecord
 
   def current_balance(currency = nil)
     if currency.present?
-      WalletService.new(self).load_balance!(currency)
+      WalletService.new(self, self.blockchain_key).load_balance!(currency)
     else
       currencies.each_with_object({}) do |c, balances|
-        balances[c.id] = WalletService.new(self).load_balance!(c)
+        balances[c.id] = WalletService.new(self, self.blockchain_key).load_balance!(c)
       rescue StandardError => e
         report_exception(e)
         balances[c.id] = NOT_AVAILABLE
@@ -139,7 +139,7 @@ class Wallet < ApplicationRecord
   end
 
   def service
-    ::WalletService.new(self)
+    ::WalletService.new(self, blockchain_key)
   end
 
   def generate_settings
