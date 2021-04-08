@@ -101,19 +101,18 @@ module API
             error!({ errors: ['account.currency.deposit_disabled'] }, 422)
           end
 
-          wallet = Wallet.deposit_wallet(currency.id)
+          blockchain = Blockchain.find_by_key(params[:blockchain_key])
 
+          unless blockchain.present?
+            error!({ errors: ['account.currency.blockchain_key.not_found'] }, 422)
+          end
+
+          wallet = Wallet.deposit_wallet(currency.id, blockchain.key)
           unless wallet.present?
             error!({ errors: ['account.wallet.not_found'] }, 422)
           end
 
-          blockchain_key = Blockchain.find_by_key(params[:blockchain_key])
-
-          unless blockchain_key.present?
-            error!({ errors: ['account.currency.blockchain_key.not_found'] }, 422)
-          end
-
-          payment_address = current_user.payment_address(wallet.id, blockchain_key.key)
+          payment_address = current_user.payment_address(wallet.id)
           present payment_address, with: API::V2::Entities::PaymentAddress, address_format: params[:address_format]
         end
       end

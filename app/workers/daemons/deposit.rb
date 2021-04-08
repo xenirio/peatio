@@ -15,8 +15,7 @@ module Workers
             Rails.logger.warn { "Can't find active deposit wallet for currency with code: #{deposit.currency_id}."}
             next
           end
-          # TODO: Add blockchain key.
-          service = WalletService.new(wallet, 'peatio')
+          service = WalletService.new(wallet)
           # Check if adapter has prepare_deposit_collection! implementation
           if service.adapter.class.instance_methods(false).include?(:prepare_deposit_collection!)
             begin
@@ -51,8 +50,7 @@ module Workers
         end
 
         wallet = Wallet.deposit_wallet(deposit.currency_id)
-        # TODO: Add blockchain key.
-        service = WalletService.new(wallet, 'peatio')
+        service = WalletService.new(wallet)
 
         transactions = service.collect_deposit!(deposit, deposit.spread_to_transactions)
 
@@ -86,8 +84,8 @@ module Workers
           Rails.logger.warn { "Can't find active fee wallet for currency with code: #{deposit.currency_id}."}
           return
         end
-        # TODO: Add blockchain key.
-        transactions = WalletService.new(fee_wallet, 'peatio').deposit_collection_fees!(deposit, deposit.spread_to_transactions)
+
+        transactions = WalletService.new(fee_wallet).deposit_collection_fees!(deposit, deposit.spread_to_transactions)
         deposit.fee_process! if transactions.present?
         Rails.logger.warn { "The API accepted token deposit collection fee and assigned transaction ID: #{transactions.map(&:as_json)}." }
       end

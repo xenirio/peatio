@@ -194,37 +194,12 @@ module API
         ) { |c| c.blockchain.min_confirmations }
 
         expose(
-          :blockchain_key,
+          :blockchains,
           if: ->(currency) { currency.coin? },
           documentation: {
             desc: 'Blockchain key of an currency',
-            example: -> { ::Currency.visible.first.blockchain_key }
           }
-        )
-
-        expose(
-          :description,
-          if: ->(currency) { currency.coin? },
-          documentation: {
-            desc: 'Description used for defining description of an currency selected blockchain'
-          }
-        ) { |c| c.blockchain.description }
-
-        expose(
-          :protocol,
-          if: ->(currency) { currency.coin? },
-          documentation: {
-            desc: 'Protocol used for defining protocol of an blockchain'
-          }
-        ) { |c| c.blockchain.protocol }
-
-        expose(
-          :warning,
-          if: ->(currency) { currency.coin? },
-          documentation: {
-            desc: 'Warning used for defining warning of an blockchain'
-          }
-        ) { |c| c.blockchain.warning }
+        ) { |c| c.blockchains.select(:id, :key, :warning, :description, :protocol).as_json }
       end
     end
   end

@@ -1,10 +1,8 @@
 class WalletService
   attr_reader :wallet, :adapter
 
-  def initialize(wallet, blockchain_key)
+  def initialize(wallet)
     @wallet = wallet
-    raise StandardError, "destination wallets don't exist" unless wallet.blockchain_key == blockchain_key || blockchain_key == 'peatio'
-
     @adapter = Peatio::Wallet.registry[wallet.gateway.to_sym].new(wallet.settings.symbolize_keys)
   end
 
@@ -147,7 +145,9 @@ class WalletService
   # transactions array with amount and to_address defined.
   def spread_between_wallets(deposit, destination_wallets)
     original_amount = deposit.amount
-    return [] if original_amount < destination_wallets.pluck(:min_collection_amount).min
+    if original_amount < destination_wallets.pluck(:min_collection_amount).min
+      return []
+    end
 
     left_amount = original_amount
 
@@ -157,7 +157,9 @@ class WalletService
       # If free amount in current wallet is too small,
       # we will not able to collect it.
       # Put 0 for this wallet.
-      amount_for_wallet = 0 if amount_for_wallet < [dw[:min_collection_amount], 0].max
+      if amount_for_wallet < [dw[:min_collection_amount], 0].max
+        amount_for_wallet = 0
+      end
 
       left_amount -= amount_for_wallet
 

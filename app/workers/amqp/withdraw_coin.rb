@@ -42,7 +42,7 @@ module Workers
                        message: 'Sending witdraw.'
 
           wallet = Wallet.active.joins(:currencies)
-                         .find_by(currencies: { id: withdraw.currency_id }, kind: :hot)
+                         .find_by(currencies: { id: withdraw.currency_id }, kind: :hot, blockchain_key: withdraw.blockchain_key)
 
           unless wallet
             @logger.warn id: withdraw.id,
@@ -64,7 +64,7 @@ module Workers
           @logger.warn id: withdraw.id,
                        message: 'Sending request to Wallet Service.'
 
-          wallet_service = WalletService.new(wallet, withdraw.blockchain_key)
+          wallet_service = WalletService.new(wallet)
           transaction = wallet_service.build_withdrawal!(withdraw)
 
           @logger.warn id: withdraw.id,

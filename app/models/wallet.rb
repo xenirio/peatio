@@ -109,17 +109,21 @@ class Wallet < ApplicationRecord
         end
     end
 
-    def deposit_wallet(currency_id)
-      Wallet.active.deposit.joins(:currencies).find_by(currencies: { id: currency_id })
+    def deposit_wallet(currency_id, blockchain_key = nil)
+      if blockchain_key.nil?
+        Wallet.active.deposit.joins(:currencies).find_by(currencies: { id: currency_id })
+      else
+        Wallet.active.deposit.joins(:currencies).find_by(currencies: { id: currency_id }, blockchain_key: blockchain_key)
+      end
     end
   end
 
   def current_balance(currency = nil)
     if currency.present?
-      WalletService.new(self, self.blockchain_key).load_balance!(currency)
+      WalletService.new(self).load_balance!(currency)
     else
       currencies.each_with_object({}) do |c, balances|
-        balances[c.id] = WalletService.new(self, self.blockchain_key).load_balance!(c)
+        balances[c.id] = WalletService.new(self).load_balance!(c)
       rescue StandardError => e
         report_exception(e)
         balances[c.id] = NOT_AVAILABLE
@@ -139,7 +143,7 @@ class Wallet < ApplicationRecord
   end
 
   def service
-    ::WalletService.new(self, blockchain_key)
+    ::WalletService.new(self)
   end
 
   def generate_settings

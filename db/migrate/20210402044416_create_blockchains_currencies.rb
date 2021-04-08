@@ -1,9 +1,9 @@
 class CreateBlockchainsCurrencies < ActiveRecord::Migration[5.2]
   def change
     create_join_table :blockchains, :currencies do |t|
-      t.string :blockchain_id, index: true
-      t.integer :currency_id, index: true
+      t.index :blockchain_id
+      t.index :currency_id
     end
-    add_index :blockchains_currencies, %i[blockchain_id currency_id], unique: true
+    change_column :blockchains_currencies, :currency_id, :string
   end
 end

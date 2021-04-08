@@ -35,7 +35,7 @@ class PaymentAddress < ApplicationRecord
   end
 
   def enqueue_address_generation
-    AMQP::Queue.enqueue(:deposit_coin_address, { member_id: member.id, wallet_id: wallet.id, blockchain_key: blockchain.key}, { persistent: true })
+    AMQP::Queue.enqueue(:deposit_coin_address, { member_id: member.id, wallet_id: wallet.id }, { persistent: true })
   end
 
   def format_address(format)
