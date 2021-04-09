@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_06_052919) do
+ActiveRecord::Schema.define(version: 2021_04_09_100639) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -88,9 +88,8 @@ ActiveRecord::Schema.define(version: 2021_04_06_052919) do
   end
 
   create_table "blockchains_currencies", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "blockchain_id"
-    t.integer "currency_id"
-    t.index ["blockchain_id", "currency_id"], name: "index_blockchains_currencies_on_blockchain_id_and_currency_id", unique: true
+    t.bigint "blockchain_id", null: false
+    t.string "currency_id", null: false
     t.index ["blockchain_id"], name: "index_blockchains_currencies_on_blockchain_id"
     t.index ["currency_id"], name: "index_blockchains_currencies_on_currency_id"
   end
