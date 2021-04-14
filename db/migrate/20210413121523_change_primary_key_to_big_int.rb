@@ -2,7 +2,9 @@ class ChangePrimaryKeyToBigInt < ActiveRecord::Migration[5.2]
   include ::PrimaryKeyMigration
 
   def up
-    drop_primary_key("accounts", "id", ["currency_id", "member_id"])
+    if ActiveRecord::Base.connection.column_exists?("accounts", "id")
+      drop_primary_key("accounts", "id", ["currency_id", "member_id"])
+    end
 
     table_names = %w[assets blockchains deposits expenses liabilities
                      members operations_accounts orders payment_addresses revenues
