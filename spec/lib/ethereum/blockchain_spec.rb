@@ -1,4 +1,4 @@
-describe Ethereum::Blockchain do
+describe Ethereum::Eth::Blockchain do
 
   let(:eth) do
     Currency.find_by(id: :eth)
@@ -23,7 +23,7 @@ describe Ethereum::Blockchain do
   let!(:address_5) { create(:whitelisted_smart_contract, :address_5) }
 
   let(:blockchain) do
-    Ethereum::Blockchain.new.tap { |b| b.configure(server: server, currencies: [eth.to_blockchain_api_settings, trst.to_blockchain_api_settings, ring.to_blockchain_api_settings, tom.to_blockchain_api_settings], whitelisted_addresses: [address_1, address_2, address_3, address_4, address_5]) }
+    Ethereum::Eth::Blockchain.new.tap { |b| b.configure(server: server, currencies: [eth.to_blockchain_api_settings, trst.to_blockchain_api_settings, ring.to_blockchain_api_settings, tom.to_blockchain_api_settings], whitelisted_addresses: [address_1, address_2, address_3, address_4, address_5]) }
   end
 
   let(:server) { 'http://127.0.0.1:8545' }
@@ -31,23 +31,23 @@ describe Ethereum::Blockchain do
 
   context :features do
     it 'defaults' do
-      blockchain1 = Ethereum::Blockchain.new
-      expect(blockchain1.features).to eq Ethereum::Blockchain::DEFAULT_FEATURES
+      blockchain1 = Ethereum::Eth::Blockchain.new
+      expect(blockchain1.features).to eq Ethereum::Eth::Blockchain::DEFAULT_FEATURES
     end
 
     it 'override defaults' do
-      blockchain2 = Ethereum::Blockchain.new(cash_addr_format: true)
+      blockchain2 = Ethereum::Eth::Blockchain.new(cash_addr_format: true)
       expect(blockchain2.features[:cash_addr_format]).to be_truthy
     end
 
     it 'custom feautures' do
-      blockchain3 = Ethereum::Blockchain.new(custom_feature: :custom)
-      expect(blockchain3.features.keys).to contain_exactly(*Ethereum::Blockchain::SUPPORTED_FEATURES)
+      blockchain3 = Ethereum::Eth::Blockchain.new(custom_feature: :custom)
+      expect(blockchain3.features.keys).to contain_exactly(*Ethereum::Eth::Blockchain::SUPPORTED_FEATURES)
     end
   end
 
   context :configure do
-    let(:blockchain) { Ethereum::Blockchain.new }
+    let(:blockchain) { Ethereum::Eth::Blockchain.new }
     it 'default settings' do
       expect(blockchain.settings).to eq({})
     end
@@ -70,7 +70,7 @@ describe Ethereum::Blockchain do
     end
 
     let(:blockchain) do
-      Ethereum::Blockchain.new.tap { |b| b.configure(server: server) }
+      Ethereum::Eth::Blockchain.new.tap { |b| b.configure(server: server) }
     end
 
     let(:method) { :eth_blockNumber }
@@ -438,7 +438,7 @@ describe Ethereum::Blockchain do
       end
 
       it 'raise undefined currency error' do
-        expect { blockchain.load_balance_of_address!('something', :usdt).to raise(Ethereum::Blockchain::UndefinedCurrencyError) }
+        expect { blockchain.load_balance_of_address!('something', :usdt).to raise(Ethereum::Eth::Blockchain::UndefinedCurrencyError) }
       end
     end
 
