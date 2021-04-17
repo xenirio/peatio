@@ -4,7 +4,6 @@ module OWHDWallet
     GAS_PRICE_THRESHOLDS = %w[standard safelow fast].freeze
 
     def initialize(custom_features = {})
-      super
       @features = DEFAULT_FEATURES.merge(custom_features).slice(*SUPPORTED_FEATURES)
       @settings = {}
     end
@@ -173,7 +172,7 @@ module OWHDWallet
     end
 
     def wallet_gas_speed
-      @wallet.fetch(:gas_speed) || 'standard'
+      @wallet[:gas_speed] || 'standard'
     end
 
     def currency_id
