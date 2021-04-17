@@ -1,7 +1,7 @@
 module OWHDWallet
   class WalletAbstract < Peatio::Wallet::Abstract
     DEFAULT_FEATURES = { skip_deposit_collection: false }.freeze
-    GAS_PRICE_THRESHOLDS = %w[standard safelow fast].freeze
+    GAS_SPEEDS = %w[standard safelow fast].freeze
 
     def initialize(custom_features = {})
       @features = DEFAULT_FEATURES.merge(custom_features).slice(*SUPPORTED_FEATURES)
@@ -172,7 +172,7 @@ module OWHDWallet
     end
 
     def wallet_gas_speed
-      @wallet[:gas_speed] || 'standard'
+      GAS_SPEEDS.include?(@wallet[:gas_speed]) ? @wallet[:gas_speed] : 'standard'
     end
 
     def currency_id

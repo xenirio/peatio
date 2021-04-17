@@ -1,8 +1,8 @@
-##  Opendax Wallet plugin
+# Openware HD Wallet plugin
 
-This service is used in OpenDAX Go HDwallet microservice to generate wallets, sign and broadcast transactions. It is using BIP-32 HD Wallet, which mean all addresses are generated from one master seed
+This service is used in OpenDAX Go HDwallet microservice to generate wallets, sign and broadcast transactions. It is using BIP-32 HD Wallet, which means all addresses are generated from one master seed.
 
-### Settings configuration examples
+## Settings configuration examples
 
 Deposit wallet
 
@@ -15,12 +15,13 @@ settings:
 ```
 
 Example:
+
 ```ruby
 Wallet.create!(
   blockchain_key: "eth-testnet",
   name: "ETH/ERC-20 Deposit Wallet",
   address: "changeme",
-  gateway: "opendax",
+  gateway: "ow-hdwallet-eth",
   kind: "deposit",
   settings: {uri: "https://hdwallet/api/v2/hdwallet", gateway_url: "https://infura.io"},
   max_balance: 0,
@@ -44,14 +45,15 @@ settings:
 ```
 
 Example:
+
 ```ruby
 Wallet.create!(
   blockchain_key: "eth-testnet",
   name: "ETH/ERC-20 HOT Wallet",
   address: "hot-wallet-address",
-  gateway: "opendax",
+  gateway: "ow-hdwallet-eth",
   kind: "hot",
-  settings: { 
+  settings: {
     uri: "https://hdwallet/api/v2/hdwallet",
     gateway_url: "https://infura.io"},
     wallet_index: 1,
@@ -61,9 +63,10 @@ Wallet.create!(
 )
 ```
 
+### Features available
 
-#### Implemented functions are
-### Create address
+#### Create address
+
 To test address creating you need to be sure that:
 1. You have deposit wallet with right configuration
 - `blockchain_key` should be some fake blockchain with right explorer_address, explorer_transaction
@@ -74,7 +77,8 @@ To test address creating you need to be sure that:
   - `passphrase` - should be vault encrypted secret from wallet private key;
   - `wallet_index` - index provided in the address generation step
 
-### There are 3 options to test:
+There are 3 options to test:
+
 1. From rails console
 
 ```ruby
@@ -93,6 +97,7 @@ service.create_address!(uid, {})
 
 2. From API call
 `api/v2/peatio/account/deposit_address/:currency`
+
 ```json
 // response
 {
@@ -120,7 +125,7 @@ payment_address.details
 {"wallet_index"=>2, "coin_type"=>"eth"}
 ```
 
-### Create transaction
+#### Create transaction
 
 To test create transaction you should have all  configuration described on `create_address` step for all wallets related to your currency (especially deposit, hot wallet)
 
@@ -134,12 +139,14 @@ Blockchain `server` param should be the same as `url` param in wallet settings (
 - Transfer funds from your account
 - Check logs of `amqp-daemon-withdraw-coin` about withdraw status from rails console, admin tower or your wallet page
 
-### Load balance
+#### Fetch wallet balance
 To test load balance you should have all configuration described on `create_address` step for all wallets related to your currency (deposit, hot, warm, cold)
-### There are 2 options to test:
-1. From rails console
+
+There are 2 options to test:
+
+1. From rails console, find deposit wallet and save it to variable
+
 ```ruby
-1. Find deposit wallet and save it to variable
 w = Wallet.find(id)
 w.current_balance
 # response
@@ -147,22 +154,28 @@ w.current_balance
   "balance":216380800000000000
 }
 ```
+
 2. From Admin API call
 `api/v2/peatio/admin/wallets/:id`
+
+Example of response:
+
 ```json
-//response
-"id": 1,
-"name": "Test wallet",
-"kind": "deposit",
-"currencies": ["fth","seele"],
-"address": "changeme",
-"gateway": "parity",
-"max_balance": "212.0",
-"balance": {
-  "fth": "2.3",
-  "seele": "223.3"
-},
-"blockchain_key": "eth-testnet",
-"status": "active",
-"created_at": "2020-09-10T17:53:03+02:00","updated_at": "2020-10-20T05:00:49+02:00"
+{
+  "id": 1,
+  "name": "Test wallet",
+  "kind": "deposit",
+  "currencies": ["fth","seele"],
+  "address": "changeme",
+  "gateway": "parity",
+  "max_balance": "212.0",
+  "balance": {
+    "fth": "2.3",
+    "seele": "223.3"
+  },
+  "blockchain_key": "eth-testnet",
+  "status": "active",
+  "created_at": "2020-09-10T17:53:03+02:00",
+  "updated_at": "2020-10-20T05:00:49+02:00"
+}
 ```

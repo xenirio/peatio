@@ -5,5 +5,4 @@ Peatio::Wallet.registry[:gnosis] = Gnosis::Wallet
 Peatio::Wallet.registry[:"ow-hdwallet-eth"] = OWHDWallet::WalletETH
 Peatio::Wallet.registry[:"ow-hdwallet-bsc"] = OWHDWallet::WalletBSC
 Peatio::Wallet.registry[:"ow-hdwallet-heco"] = OWHDWallet::WalletHECO
-Peatio::Wallet.registry[:opendax] = OWHDWallet::Wallet
 Peatio::Wallet.registry[:opendax_cloud] = OpendaxCloud::Wallet
