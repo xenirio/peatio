@@ -53,15 +53,36 @@ module Ethereum
         if tx.fetch('input').hex <= 0
           next if invalid_eth_transaction?(tx)
         else
-          next if @erc20.find do |c|
-            # Check `to` and `input` options to find erc-20 smart contract contract 
-            c.dig(:options, contract_address_option) == normalize_address(tx.fetch('to')) ||
-            c.dig(:options, contract_address_option) == '0x' + tx.fetch('input')[34...74].to_s ||
-            # Check if `to` in whitelisted smart contracts
-            @whitelisted_addresses.include?(tx.fetch('to'))
-          end.blank?
+          process_tx = false
 
-          tx = client.json_rpc(:eth_getTransactionReceipt, [normalize_txid(tx.fetch('hash'))])
+          # 1. Check if the smart contract destination is in whitelist
+          #    The common case is a withdraw from a known smart contract of a major exchange
+          if @whitelisted_addresses.include?(tx.fetch('to'))
+            process_tx = true
+          else
+            # 2. Check if the transaction is one of our currencies smart contract
+            @erc20.each do |c|
+              contract_address = normalize_address(c.dig(:options, contract_address_option))
+              next if contract_address != normalize_address(tx.fetch('to'))
+
+              input = tx.fetch('input')
+              # Check if the smart contract call is transfer(address,uint256)
+              next if input[2..9] != 'a9059cbb'
+
+              # Check if the destination of the transfer is one of our deposit addresses
+              destination = "0x#{input[34...74]}"
+              if PaymentAddress.where(address: destination).present?
+                process_tx = true
+                break
+              end
+            end
+          end
+
+          next unless process_tx
+
+          tx_id = normalize_txid(tx.fetch('hash'))
+          Rails.logger.debug "Fetching tx receipt #{tx_id}"
+          tx = client.json_rpc(:eth_getTransactionReceipt, [tx_id])
           next if tx.nil? || tx.fetch('to').blank?
         end
 
@@ -189,7 +210,10 @@ module Ethereum
         next if log.fetch('topics').blank? || log.fetch('topics')[0] != TOKEN_EVENT_IDENTIFIER
 
         # Skip if ERC20 contract address doesn't match.
-        currencies = @erc20.select { |c| c.dig(:options, contract_address_option) == log.fetch('address') }
+        currencies = @erc20.select do |c|
+          normalize_address(c.dig(:options, contract_address_option)) == normalize_address(log.fetch('address'))
+        end
+
         next if currencies.blank?
 
         destination_address = normalize_address('0x' + log.fetch('topics').last[-40..-1])
