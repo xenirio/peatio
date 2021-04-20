@@ -125,7 +125,7 @@ module Ethereum
       return if currency.blank?
 
       txn_receipt = client.json_rpc(:eth_getTransactionReceipt, [transaction.hash])
-      if currency.id == @eth.id
+      if currency[:id] == @eth[:id]
         txn_json = client.json_rpc(:eth_getTransactionByHash, [transaction.hash])
         attributes = {
           amount: convert_from_base_unit(txn_json.fetch('value').hex, currency),

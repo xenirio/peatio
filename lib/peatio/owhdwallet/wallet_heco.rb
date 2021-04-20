@@ -17,7 +17,7 @@ module OWHDWallet
     end
 
     def wallet_gateway_url
-      @wallet.fetch(:gateway_url) || default_wallet_gateway_url
+      @wallet[:gateway_url] || default_wallet_gateway_url
     end
 
     def default_wallet_gateway_url
@@ -29,7 +29,7 @@ module OWHDWallet
     end
 
     def testnet?
-      @wallet.fetch(:testnet)
+      @wallet[:testnet]
     end
   end
 end
