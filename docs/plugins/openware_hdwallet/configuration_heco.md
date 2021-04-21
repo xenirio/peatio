@@ -65,6 +65,7 @@ Wallet.create!(
   kind: "deposit",
   settings: {uri: "https://hdwallet/api/v2/hdwallet", gateway_url: "https://http-mainnet.hecochain.com"},
   max_balance: 0,
+  currency_ids: ["ht"],
   status: "active"
 )
 ```
@@ -93,6 +94,7 @@ Wallet.create!(
   kind: "hot",
   settings: {uri: "https://hdwallet/api/v2/hdwallet", gateway_url: "https://http-mainnet.hecochain.com"},
   max_balance: 10000,
+  currency_ids: ["ht"],
   status: "active"
 )
 ```
@@ -116,13 +118,14 @@ Example from the console:
 
 ```ruby
 Wallet.create!(
-  blockchain_key: "heco-mainnet",
   name: "HT/HRC20 Fee Wallet",
+  blockchain_key: "heco-mainnet",
   address: "",
   gateway: "ow-hdwallet-heco",
   kind: "hot",
   settings: {uri: "https://hdwallet/api/v2/hdwallet", gateway_url: "https://http-mainnet.hecochain.com"},
   max_balance: 10000,
+  currency_ids: ["ht"],
   status: "active"
 )
 ```

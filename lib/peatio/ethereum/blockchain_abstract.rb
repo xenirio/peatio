@@ -4,6 +4,7 @@ module Ethereum
     UndefinedCurrencyError = Class.new(StandardError)
 
     TOKEN_EVENT_IDENTIFIER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+    ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
     SUCCESS = '0x1'
     FAILED = '0x0'
 
@@ -66,12 +67,12 @@ module Ethereum
               next if contract_address != normalize_address(tx.fetch('to'))
 
               input = tx.fetch('input')
-              # Check if the smart contract call is transfer(address,uint256)
-              next if input[2..9] != 'a9059cbb'
+              # The usual case is a function call transfer(address,uint256) with footprint 'a9059cbb'
 
-              # Check if the destination of the transfer is one of our deposit addresses
-              destination = "0x#{input[34...74]}"
-              if PaymentAddress.where(address: destination).present?
+              # Check if one of the first params of the function call is one of our deposit addresses
+              args = ["0x#{input[34...74]}", "0x#{input[75...115]}"]
+              args.delete(ZERO_ADDRESS)
+              if PaymentAddress.where(address: args).present?
                 process_tx = true
                 break
               end

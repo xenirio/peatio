@@ -1,5 +1,9 @@
 module OWHDWallet
   class WalletBTC < WalletAbstract
+    def native_currency_id
+      'btc'
+    end
+
     def coin_type
       'btc'
     end

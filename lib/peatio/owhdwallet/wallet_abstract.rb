@@ -75,7 +75,7 @@ module OWHDWallet
         passphrase: wallet_secret
       })
 
-      transaction.currency_id = coin_type if transaction.currency_id.blank?
+      transaction.currency_id = native_currency_id if transaction.currency_id.blank?
       transaction.hash = response['tx']
       transaction.options = {}
       transaction.options[:gas_limit] = gas_limit

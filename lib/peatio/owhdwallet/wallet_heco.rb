@@ -1,15 +1,9 @@
 module OWHDWallet
   class WalletHECO < WalletAbstract
+    include ::Ethereum::Heco::Params
+
     def default_fees
       { heco_gas_limit: 21_000, hrc20_gas_limit: 90_000, gas_price: :standard }.freeze
-    end
-
-    def coin_type
-      'heco'
-    end
-
-    def token_name
-      'hrc20'
     end
 
     def eth_like?
@@ -30,6 +24,10 @@ module OWHDWallet
 
     def testnet?
       @wallet[:testnet]
+    end
+
+    def prepare_deposit_collection!(deposit_transaction, spread_transactions, deposit_currency)
+      super
     end
   end
 end
