@@ -12,13 +12,13 @@ describe API::V2::Admin::Withdraws, type: :request do
       member.accounts.map { |a| a.update(balance: 500) }
     end
 
-    create(:usd_withdraw, amount: 10.0, sum: 10.0, member: admin)
-    create(:usd_withdraw, amount: 9.0, sum: 9.0, member: admin)
-    create(:usd_withdraw, amount: 100.0, sum: 100.0, member: level_3_member)
-    create(:btc_withdraw, amount: 42.0, sum: 42.0, txid: 'special_txid', member: admin)
-    create(:btc_withdraw, amount: 42.0, sum: 42.0, member: admin, aasm_state: :accepted)
-    create(:btc_withdraw, amount: 11.0, sum: 11.0, member: level_3_member, aasm_state: :skipped)
-    create(:btc_withdraw, amount: 12.0, sum: 12.0, member: level_3_member, aasm_state: :errored)
+    create(:usd_withdraw, amount: 10.0, sum: 10.0, member: admin, created_at: Time.now)
+    create(:usd_withdraw, amount: 9.0, sum: 9.0, member: admin, created_at: Time.now + 6)
+    create(:usd_withdraw, amount: 100.0, sum: 100.0, member: level_3_member, created_at: Time.now + 3)
+    create(:btc_withdraw, amount: 42.0, sum: 42.0, txid: 'special_txid', member: admin, created_at: Time.now + 4)
+    create(:btc_withdraw, amount: 42.0, sum: 42.0, member: admin, aasm_state: :accepted, created_at: Time.now + 1)
+    create(:btc_withdraw, amount: 11.0, sum: 11.0, member: level_3_member, aasm_state: :skipped, created_at: Time.now + 2)
+    create(:btc_withdraw, amount: 12.0, sum: 12.0, member: level_3_member, aasm_state: :errored, created_at: Time.now + 5)
   end
 
   describe 'GET /api/v2/admin/withdraws' do
@@ -42,6 +42,15 @@ describe API::V2::Admin::Withdraws, type: :request do
     end
 
     context 'ordering' do
+      it 'descending with created_at by default' do
+        api_get url, token: token, params: {}
+
+        actual = JSON.parse(response.body)
+        expected = Withdraw.order(created_at: 'desc').map { |m| m.created_at.strftime('%FT%TZ') }
+
+        expect(actual.map { |a| a['created_at'] }).to eq expected
+      end
+
       it 'ascending by id' do
         api_get url, token: token, params: { order_by: 'id', ordering: 'asc' }
 

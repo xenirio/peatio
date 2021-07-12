@@ -31,12 +31,18 @@ module API
           optional :wallet_type,
                    values: { value: ->(v) { (Array.wrap(v.to_sym) - Wallet.gateways).blank? }, message: 'admin.withdraw.invalid_wallet_type' },
                    desc: -> { 'Select withdraw that can be processed from wallets with given type e.g. patiry' }
+          optional :ordering,
+                   values: { value: %w(asc desc), message: 'admin.pagination.invalid_ordering' },
+                   default: 'desc',
+                   desc: 'If set, returned values will be sorted in specific order, defaults to \'desc\'.'
+          optional :order_by,
+                   default: 'created_at',
+                   desc: 'Name of the field, which result will be ordered by.'
           use :uid
           use :currency
           use :currency_type
           use :date_picker
           use :pagination
-          use :ordering
         end
         get '/withdraws' do
           admin_authorize! :read, ::Withdraw

@@ -8,16 +8,16 @@ describe API::V2::Admin::Deposits, type: :request do
   let(:level_3_member_token) { jwt_for(level_3_member) }
   let!(:fiat_deposits) do
     [
-      create(:deposit_usd, amount: 10.0),
-      create(:deposit_usd, amount: 9.0),
-      create(:deposit_usd, amount: 100.0, member: level_3_member),
+      create(:deposit_usd, amount: 10.0, created_at: Time.now + 5),
+      create(:deposit_usd, amount: 9.0, created_at: Time.now + 4),
+      create(:deposit_usd, amount: 100.0, member: level_3_member, created_at: Time.now + 3)
     ]
   end
   let!(:coin_deposits) do
     [
-      create(:deposit_btc, amount: 102.0),
-      create(:deposit_btc, amount: 11.0, member: level_3_member),
-      create(:deposit_btc, amount: 12.0, member: level_3_member),
+      create(:deposit_btc, amount: 102.0, created_at: Time.now + 2),
+      create(:deposit_btc, amount: 11.0, member: level_3_member, created_at: Time.now + 1),
+      create(:deposit_btc, amount: 12.0, member: level_3_member, created_at: Time.now)
     ]
   end
 
@@ -42,6 +42,17 @@ describe API::V2::Admin::Deposits, type: :request do
     end
 
     context 'ordering' do
+      it 'descending with created_at by default' do
+        api_get url, token: token, params: {}
+
+        actual = JSON.parse(response.body)
+        expected = (coin_deposits + fiat_deposits)
+                   .sort { |a, b| b.created_at - a.created_at }
+                   .map { |m| m.created_at.strftime('%FT%TZ') }
+
+        expect(actual.map { |a| a['created_at'] }).to eq expected
+      end
+
       it 'ascending by id' do
         api_get url, token: token, params: { order_by: 'id', ordering: 'asc' }
 
